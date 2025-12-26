@@ -89,7 +89,7 @@ export const Website: React.FC = () => {
     return b.map((item: any) => ({...item, timestamp: new Date(item.timestamp)}));
   });
   
-  const [adminAuth, setAdminAuth] = useState<any>(() => load(STORAGE_KEYS.ADMIN_AUTH, { username: 'ADMIN', password: '123' }));
+  const [adminAuth] = useState<any>(() => load(STORAGE_KEYS.ADMIN_AUTH, { username: 'ADMIN', password: '123' }));
   const [driverAuths, setDriverAuths] = useState<DriverAuth[]>(() => load(STORAGE_KEYS.DRIVER_AUTHS, [
     { driverId: 'D1', username: 'SANJAY', password: '123' },
     { driverId: 'D2', username: 'ARJUN', password: '123' }
@@ -104,7 +104,6 @@ export const Website: React.FC = () => {
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.DRIVERS, JSON.stringify(drivers)); }, [drivers]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings)); }, [bookings]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.CURRENT_CUSTOMER, JSON.stringify(currentCustomer)); }, [currentCustomer]);
-  useEffect(() => { localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, JSON.stringify(adminAuth)); }, [adminAuth]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.DRIVER_AUTHS, JSON.stringify(driverAuths)); }, [driverAuths]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.LANG, lang); }, [lang]);
 
@@ -152,44 +151,44 @@ export const Website: React.FC = () => {
   const renderView = () => {
     switch(view) {
       case 'about': return <AboutPage t={t.about} common={t.common} onBack={goBack} />;
-      case 'fleet': return <FleetPage t={t.fleet} common={t.common} vehicles={vehicles} onBack={goBack} onBook={() => navigateTo('booking')} onViewTariff={(v) => { setSelectedVehicle(v); navigateTo('vehicle-tariff'); }} />;
+      case 'fleet': return <FleetPage t={t.fleet} common={t.common} vehicles={vehicles} onBack={goBack} onBook={() => navigateTo('booking')} onViewTariff={(v: Vehicle) => { setSelectedVehicle(v); navigateTo('vehicle-tariff'); }} />;
       case 'locations': return <LocationPage t={t.locations} common={t.common} onBack={goBack} />;
       case 'contact': return <ContactPage t={t.contact} common={t.common} supportPhone={settings.supportPhone} onBack={goBack} />;
-      case 'booking': return <BookingPage onBack={goBack} drivers={drivers} vehicles={vehicles} onNewBooking={(b) => setBookings([...bookings, b])} />;
+      case 'booking': return <BookingPage onBack={goBack} drivers={drivers} vehicles={vehicles} onNewBooking={(b: Booking) => setBookings([...bookings, b])} />;
       case 'identity': return <IdentityPage onBack={goBack} isTamil={lang === Language.TAMIL} />;
       case 'temple-tour':
         return <TempleTourPage lang={lang} onBack={goBack} settings={settings} onSelectTemple={startTempleBooking} />;
       case 'temple-booking':
         return selectedTemple ? (
-          <TempleBookingPage onBack={goBack} drivers={drivers} vehicles={vehicles} onNewBooking={(b) => setBookings([...bookings, b])} selectedTemple={selectedTemple} />
+          <TempleBookingPage onBack={goBack} drivers={drivers} vehicles={vehicles} onNewBooking={(b: Booking) => setBookings([...bookings, b])} selectedTemple={selectedTemple} />
         ) : null;
       case 'vehicle-tariff': 
         return selectedVehicle ? (
           <VehicleTariffPage vehicle={selectedVehicle} onBack={goBack} onBook={() => navigateTo('booking')} />
         ) : null;
       case 'ride-history': 
-        if (!currentCustomer) { navigateTo('customer-login'); return null; }
+        if (!currentCustomer) { navigateTo('home'); return null; }
         return <CustomerDashboard customer={currentCustomer} bookings={bookings} drivers={drivers} onBack={goBack} onBookNew={() => navigateTo('booking')} onLogout={() => { setCurrentCustomer(null); navigateTo('home'); }} />;
       case 'admin':
         if (!isAdminAuthenticated) return <AuthPortal role={UserRole.ADMIN} onBack={goBack} onSuccess={() => setIsAdminAuthenticated(true)} adminCredentials={adminAuth} />;
         return (
           <AdminPanel 
             vehicles={vehicles} setVehicles={setVehicles} drivers={drivers} setDrivers={setDrivers} 
-            bookings={bookings} setBookings={setBookings} adminAuth={adminAuth} setAdminAuth={setAdminAuth}
+            bookings={bookings} setBookings={setBookings} adminAuth={adminAuth} setAdminAuth={() => {}}
             driverAuths={driverAuths} setDriverAuths={setDriverAuths} settings={settings} setSettings={setSettings}
             onLogout={() => { setIsAdminAuthenticated(false); navigateTo('home'); }} 
           />
         );
       case 'driver':
-        if (!authenticatedDriverId) return <AuthPortal role={UserRole.DRIVER} onBack={goBack} onSuccess={(id) => setAuthenticatedDriverId(id || null)} driverAuths={driverAuths} />;
+        if (!authenticatedDriverId) return <AuthPortal role={UserRole.DRIVER} onBack={goBack} onSuccess={(id?: string) => setAuthenticatedDriverId(id || null)} driverAuths={driverAuths} />;
         const activeDriver = drivers.find(d => d.id === authenticatedDriverId);
         return activeDriver ? (
           <DriverApp 
             onLogout={() => { setAuthenticatedDriverId(null); navigateTo('home'); }} 
             profile={activeDriver} 
-            onStatusChange={(isOnline) => setDrivers(drivers.map(d => d.id === activeDriver.id ? {...d, isOnline} : d))} 
+            onStatusChange={(isOnline: boolean) => setDrivers(drivers.map(d => d.id === activeDriver.id ? {...d, isOnline} : d))} 
             bookings={bookings.filter(b => b.driverId === activeDriver.id || b.status === BookingStatus.PENDING)} 
-            onUpdateBookingStatus={(id, s) => setBookings(bookings.map(b => b.id === id ? {...b, status: s, driverId: s === BookingStatus.ASSIGNED ? activeDriver.id : b.driverId} : b))} 
+            onUpdateBookingStatus={(id: string, s: BookingStatus) => setBookings(bookings.map(b => b.id === id ? {...b, status: s, driverId: s === BookingStatus.ASSIGNED ? activeDriver.id : b.driverId} : b))} 
           />
         ) : null;
       default: return null;
