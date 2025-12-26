@@ -135,6 +135,11 @@ export const Website: React.FC = () => {
     setView(previousView);
   };
 
+  const resetSystem = () => {
+    Object.values(STORAGE_KEYS).forEach(key => localStorage.removeItem(key));
+    window.location.reload();
+  };
+
   const handleLogoError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
     const target = e.target as HTMLImageElement;
     if (target.src === settings.logoUrl && settings.logoUrl !== OFFICIAL_LOGO_URL) {
@@ -188,6 +193,7 @@ export const Website: React.FC = () => {
             bookings={bookings} setBookings={setBookings} adminAuth={adminAuth} setAdminAuth={() => {}}
             driverAuths={driverAuths} setDriverAuths={setDriverAuths} settings={settings} setSettings={setSettings}
             onLogout={() => { setIsAdminAuthenticated(false); navigateTo('home'); }} 
+            onResetSystem={resetSystem}
           />
         );
       case 'driver':
@@ -275,7 +281,7 @@ export const Website: React.FC = () => {
             {renderBrandLogo("h-8 md:h-10")}
             <div className="hidden sm:flex flex-col">
               <span className="font-black text-xs tracking-tight text-white leading-none uppercase">{settings.appName || t.nav.brand}</span>
-              <span className="text-[7px] font-bold text-yellow-400 uppercase tracking-[2px] opacity-60">EST. 2010</span>
+              <span className="text-[7px] font-bold text-yellow-400 uppercase tracking-[2px] opacity-60">EST. 2025</span>
             </div>
           </div>
 
