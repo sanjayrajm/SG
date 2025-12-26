@@ -90,8 +90,9 @@ export const SmartAssistant: React.FC = () => {
           onopen: () => {
             setIsActive(true);
             setIsConnecting(false);
-            const source = audioContextRef.current!.createMediaStreamSource(stream);
-            const scriptProcessor = audioContextRef.current!.createScriptProcessor(4096, 1, 1);
+            if (!audioContextRef.current) return;
+            const source = audioContextRef.current.createMediaStreamSource(stream);
+            const scriptProcessor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
             scriptProcessor.onaudioprocess = (e) => {
               const inputData = e.inputBuffer.getChannelData(0);
               const l = inputData.length;
@@ -101,16 +102,20 @@ export const SmartAssistant: React.FC = () => {
               sessionPromise.then(session => session.sendRealtimeInput({ media: pcmBlob }));
             };
             source.connect(scriptProcessor);
-            scriptProcessor.connect(audioContextRef.current!.destination);
+            scriptProcessor.connect(audioContextRef.current.destination);
           },
           onmessage: async (message: LiveServerMessage) => {
-            if (message.serverContent?.outputTranscription) {
-              setTranscription(prev => prev + message.serverContent!.outputTranscription!.text);
+            const content = message.serverContent;
+            if (content?.outputTranscription) {
+              setTranscription(prev => prev + content.outputTranscription!.text);
             }
-            if (message.serverContent?.turnComplete) {
+            if (content?.turnComplete) {
               setTranscription('');
             }
-            const base64Audio = message.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
+            
+            const modelTurn = content?.modelTurn;
+            const base64Audio = modelTurn?.parts?.[0]?.inlineData?.data;
+            
             if (base64Audio && outputAudioContextRef.current) {
               const ctx = outputAudioContextRef.current;
               nextStartTimeRef.current = Math.max(nextStartTimeRef.current, ctx.currentTime);
@@ -123,7 +128,7 @@ export const SmartAssistant: React.FC = () => {
               nextStartTimeRef.current += audioBuffer.duration;
               sourcesRef.current.add(source);
             }
-            if (message.serverContent?.interrupted) {
+            if (content?.interrupted) {
               for (const s of sourcesRef.current) s.stop();
               sourcesRef.current.clear();
               nextStartTimeRef.current = 0;
