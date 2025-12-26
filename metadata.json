@@ -1,0 +1,9 @@
+{
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "name": "SG Call Taxi - Unified AI Ecosystem",
+  "description": "Kanchipuram's elite transportation network."
+}

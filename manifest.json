@@ -1,0 +1,18 @@
+
+{
+  "short_name": "SG Taxi",
+  "name": "SG Call Taxi Kanchipuram",
+  "icons": [
+    {
+      "src": "https://sanjayrajm.github.io/SGCALLTAXI-LOGO/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#FFC107",
+  "background_color": "#020617",
+  "orientation": "portrait"
+}
