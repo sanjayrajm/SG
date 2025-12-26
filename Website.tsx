@@ -18,11 +18,12 @@ import { ContactPage } from './components/ContactPage';
 import { AboutPage } from './components/AboutPage';
 import { VehicleTariffPage } from './components/VehicleTariffPage';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { BookingConfirmationPage } from './components/BookingConfirmationPage';
 import { VEHICLES } from './constants';
 import { TRANSLATIONS } from './translations';
 import { Vehicle, DriverProfile, Booking, DriverAuth, UserRole, AppSettings, CustomerProfile, Language, BookingStatus } from './types';
 
-type View = 'home' | 'about' | 'fleet' | 'locations' | 'contact' | 'booking' | 'temple-booking' | 'temple-tour' | 'identity' | 'admin' | 'driver' | 'ride-history' | 'customer-login' | 'vehicle-tariff';
+type View = 'home' | 'about' | 'fleet' | 'locations' | 'contact' | 'booking' | 'temple-booking' | 'temple-tour' | 'identity' | 'admin' | 'driver' | 'ride-history' | 'customer-login' | 'vehicle-tariff' | 'confirmation';
 
 const STORAGE_KEYS = {
   SETTINGS: 'sg_settings_v1',
@@ -49,6 +50,7 @@ export const Website: React.FC = () => {
   const [history, setHistory] = useState<View[]>(['home']);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [selectedTemple, setSelectedTemple] = useState<string | null>(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [logoFailed, setLogoFailed] = useState(false);
@@ -104,6 +106,7 @@ export const Website: React.FC = () => {
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.DRIVERS, JSON.stringify(drivers)); }, [drivers]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.BOOKINGS, JSON.stringify(bookings)); }, [bookings]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.CURRENT_CUSTOMER, JSON.stringify(currentCustomer)); }, [currentCustomer]);
+  useEffect(() => { localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, JSON.stringify(adminAuth)); }, [adminAuth]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.DRIVER_AUTHS, JSON.stringify(driverAuths)); }, [driverAuths]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.LANG, lang); }, [lang]);
 
@@ -165,6 +168,14 @@ export const Website: React.FC = () => {
       case 'vehicle-tariff': 
         return selectedVehicle ? (
           <VehicleTariffPage vehicle={selectedVehicle} onBack={goBack} onBook={() => navigateTo('booking')} />
+        ) : null;
+      case 'confirmation':
+        return selectedBooking ? (
+          <BookingConfirmationPage 
+            booking={selectedBooking} 
+            driver={drivers.find(d => d.id === selectedBooking.driverId) || null} 
+            onReturnHome={() => navigateTo('home')} 
+          />
         ) : null;
       case 'ride-history': 
         if (!currentCustomer) { navigateTo('home'); return null; }
@@ -406,6 +417,19 @@ export const Website: React.FC = () => {
                     >
                       {t.hero.ctaBook}
                     </motion.button>
+                    {bookings.length > 0 && (
+                      <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          setSelectedBooking(bookings[bookings.length - 1]);
+                          navigateTo('confirmation');
+                        }}
+                        className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-12 py-5 rounded-full font-black text-xl italic uppercase transition-all"
+                      >
+                        {isTamil ? 'முன்பதிவு விவரம் ➔' : 'VIEW BOOKING ➔'}
+                      </motion.button>
+                    )}
                     <motion.button 
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}

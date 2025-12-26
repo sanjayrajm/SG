@@ -90,23 +90,46 @@ export const SHIVA_TEMPLES = [
   { id: 12, name: "Atchipureeswarar Temple", location: "Atchirupakkam (48 KM from Chengalpattu)", significance: "Paadal Petra Sivalayam #12" }
 ];
 
-export const NEURAL_LOCATIONS = [
-  "Kanchipuram Bus Stand", "Kanchipuram Railway Station", "Ekambareswarar Temple", "Kamakshi Amman Temple",
-  "Chennai Airport (MAA)", "Chennai Central", "Koyambedu CMBT", "Mahabalipuram", "Chengalpattu",
-  "Vellore CMC", "Sriperumbudur", "Arani", "Cheyyar", "Vandavasi"
-];
-
 export const NEURAL_LOCATION_REGISTRY = [
-  { id: '1', name: 'Kanchipuram Bus Stand', district: 'Kanchipuram' },
-  { id: '2', name: 'Kanchipuram Railway Station', district: 'Kanchipuram' },
-  { id: '3', name: 'Ekambareswarar Temple', district: 'Kanchipuram' },
-  { id: '4', name: 'Kamakshi Amman Temple', district: 'Kanchipuram' },
-  { id: '5', name: 'Chennai Airport (MAA)', district: 'Chennai' },
-  { id: '6', name: 'Chennai Central', district: 'Chennai' },
-  { id: '7', name: 'Koyambedu CMBT', district: 'Chennai' },
-  { id: '8', name: 'Mahabalipuram', district: 'Chengalpattu' },
-  { id: '9', name: 'Chengalpattu Junction', district: 'Chengalpattu' },
-  { id: '10', name: 'Vellore CMC', district: 'Vellore' }
+  // CORE KANCHIPURAM GRID
+  { id: 'kpm-bus', name: 'Kanchipuram Bus Stand', district: 'Kanchipuram', dist: 0.8 },
+  { id: 'kpm-rail', name: 'Kanchipuram Railway Station', district: 'Kanchipuram', dist: 1.2 },
+  { id: 'ekam', name: 'Ekambareswarar Temple', district: 'Kanchipuram', dist: 1.59 },
+  { id: 'kamak', name: 'Kamakshi Amman Temple', district: 'Kanchipuram', dist: 1.12 },
+  { id: 'ulag', name: 'Ulagalantha Perumal Temple', district: 'Kanchipuram', dist: 0.60 },
+  { id: 'vaik', name: 'Vaikunta Perumal Temple', district: 'Kanchipuram', dist: 1.03 },
+  { id: 'pand', name: 'Pandava Thoothar Perumal Temple', district: 'Kanchipuram', dist: 2.13 },
+  { id: 'chitra', name: 'Chitragupta Temple', district: 'Kanchipuram', dist: 0.43 },
+  { id: 'kumara', name: 'Kumarakottam Murugan Temple', district: 'Kanchipuram', dist: 1.42 },
+  { id: 'adi-k', name: 'Adi Kamakshi Temple', district: 'Kanchipuram', dist: 1.50 },
+  { id: 'kailas', name: 'Kailasanathar Temple', district: 'Kanchipuram', dist: 594.22 },
+  { id: 'varad', name: 'Varadaraja Perumal Temple', district: 'Kanchipuram', dist: 302.53 },
+  { id: 'mutt', name: 'Kanchi Mutt', district: 'Kanchipuram', dist: 111.59 },
+  
+  // LAKES & SANCTUARIES
+  { id: 'vedanth', name: 'Vedanthangal Bird Sanctuary', district: 'Chengalpattu', dist: 44.52 },
+  { id: 'madurant-l', name: 'Madurantakam Lake', district: 'Chengalpattu', dist: 60.36 },
+  { id: 'madurant-t', name: 'Madurantakam Temple', district: 'Chengalpattu', dist: 60.36 },
+  
+  // CHENNAI BELT
+  { id: 'maa', name: 'Chennai Airport (MAA)', district: 'Chennai', dist: 72.03 },
+  { id: 'central', name: 'Chennai Central', district: 'Chennai', dist: 75.81 },
+  { id: 'cmbt', name: 'Koyambedu CMBT', district: 'Chennai', dist: 68.45 },
+  { id: 'kapal', name: 'Kapaleeshwarar Temple', district: 'Chennai', dist: 55.09 },
+  { id: 'besant', name: 'Besant Nagar', district: 'Chennai', dist: 78.66 },
+  { id: 'vandalur', name: 'Vandalur Zoo', district: 'Chennai', dist: 49.36 },
+  
+  // MAHABALIPURAM BELT
+  { id: 'maha', name: 'Mahabalipuram', district: 'Chengalpattu', dist: 66.08 },
+  { id: 'shore', name: 'Shore Temple', district: 'Chengalpattu', dist: 67.11 },
+  { id: 'pancha', name: 'Pancha Rathas', district: 'Chengalpattu', dist: 66.75 },
+  
+  // ARIYALUR REGION
+  { id: 'ariyalur', name: 'Ariyalur', district: 'Ariyalur', dist: 237.39 },
+  { id: 'gangai', name: 'Gangaikonda Cholapuram', district: 'Ariyalur', dist: 225.23 },
+  { id: 'thirumanur', name: 'Thirumanur', district: 'Ariyalur', dist: 260.95 },
+  { id: 'udayarpal', name: 'Udayarpalayam', district: 'Ariyalur', dist: 220.23 },
+  { id: 'andimadam', name: 'Andimadam', district: 'Ariyalur', dist: 197.30 }
 ];
 
 export const TAMIL_NADU_DISTRICTS = [
