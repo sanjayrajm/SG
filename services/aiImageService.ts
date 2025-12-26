@@ -1,3 +1,4 @@
+
 import { getAI } from "../aiConfig";
 
 /**
@@ -24,9 +25,11 @@ export const generateVehicleImage = async (vehicleType: string, models: string[]
       },
     });
 
-    if (response.generatedImages && response.generatedImages.length > 0) {
-      const base64Data = response.generatedImages[0].image.imageBytes;
-      return `data:image/png;base64,${base64Data}`;
+    if (response && response.generatedImages && response.generatedImages.length > 0) {
+      const base64Data = response.generatedImages[0]?.image?.imageBytes;
+      if (base64Data) {
+        return `data:image/png;base64,${base64Data}`;
+      }
     }
     throw new Error("No image data returned from Imagen");
   } catch (error) {
