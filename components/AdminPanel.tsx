@@ -18,11 +18,12 @@ interface Props {
   settings: AppSettings;
   setSettings: React.Dispatch<React.SetStateAction<AppSettings>>;
   onLogout: () => void;
+  onResetSystem?: () => void;
 }
 
 export const AdminPanel: React.FC<Props> = ({ 
   vehicles, setVehicles, drivers, setDrivers, bookings, setBookings,
-  driverAuths, setDriverAuths, settings, setSettings, onLogout
+  driverAuths, setDriverAuths, settings, setSettings, onLogout, onResetSystem
 }) => {
   const [activePage, setActivePage] = useState('dashboard');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -31,6 +32,7 @@ export const AdminPanel: React.FC<Props> = ({
   // Modal States
   const [isDriverModalOpen, setIsDriverModalOpen] = useState(false);
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState(false);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   
   const [driverForm, setDriverForm] = useState<Partial<DriverProfile & { username: string, password?: string }>>({});
   const [vehicleForm, setVehicleForm] = useState<Partial<Vehicle>>({});
@@ -442,20 +444,36 @@ export const AdminPanel: React.FC<Props> = ({
                           className="w-full bg-black/60 border border-white/10 p-6 rounded-3xl font-bold text-white outline-none focus:border-yellow-400 transition-all" 
                         />
                       </div>
-                      <div className="pt-4 flex items-center justify-between bg-white/5 p-6 rounded-3xl border border-white/5">
-                         <div className="space-y-1">
-                            <p className="font-black italic uppercase text-sm">Deployment Status</p>
-                            <p className="text-[8px] font-bold text-slate-500 uppercase tracking-[2px]">Toggle global network</p>
-                         </div>
-                         <button 
-                          onClick={() => setSettings({...settings, serviceEnabled: !settings.serviceEnabled})}
-                          className={`w-16 h-8 rounded-full transition-all relative ${settings.serviceEnabled ? 'bg-green-500' : 'bg-red-500'}`}
-                         >
-                            <motion.div 
-                              animate={{ x: settings.serviceEnabled ? 32 : 4 }}
-                              className="w-6 h-6 bg-white rounded-full mt-1" 
-                            />
-                         </button>
+                      <div className="pt-4 space-y-6">
+                        <div className="flex items-center justify-between bg-white/5 p-6 rounded-3xl border border-white/5">
+                           <div className="space-y-1">
+                              <p className="font-black italic uppercase text-sm">Deployment Status</p>
+                              <p className="text-[8px] font-bold text-slate-500 uppercase tracking-[2px]">Toggle global network</p>
+                           </div>
+                           <button 
+                            onClick={() => setSettings({...settings, serviceEnabled: !settings.serviceEnabled})}
+                            className={`w-16 h-8 rounded-full transition-all relative ${settings.serviceEnabled ? 'bg-green-500' : 'bg-red-500'}`}
+                           >
+                              <motion.div 
+                                animate={{ x: settings.serviceEnabled ? 32 : 4 }}
+                                className="w-6 h-6 bg-white rounded-full mt-1" 
+                              />
+                           </button>
+                        </div>
+                        
+                        {/* SYSTEM RESET - FRESH START */}
+                        <div className="bg-red-500/5 p-6 rounded-3xl border border-red-500/20 space-y-4">
+                           <div className="space-y-1">
+                              <p className="text-red-500 font-black italic uppercase text-sm">Tactical System Purge</p>
+                              <p className="text-[8px] font-bold text-slate-600 uppercase tracking-[2px]">Wipe all local deployment data</p>
+                           </div>
+                           <button 
+                             onClick={() => setShowResetConfirm(true)}
+                             className="w-full py-4 bg-red-500 text-white rounded-2xl font-black uppercase text-[10px] tracking-[4px] hover:bg-red-600 transition-all shadow-xl"
+                           >
+                              INITIATE FACTORY RESET
+                           </button>
+                        </div>
                       </div>
                    </div>
                 </div>
@@ -494,6 +512,40 @@ export const AdminPanel: React.FC<Props> = ({
           )}
         </AnimatePresence>
       </main>
+
+      {/* Reset Confirmation Overlay */}
+      <AnimatePresence>
+        {showResetConfirm && (
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-black/90 backdrop-blur-xl">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-slate-900 border-2 border-red-500/40 p-10 rounded-[50px] shadow-4xl max-w-sm w-full text-center space-y-8"
+            >
+               <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto text-4xl border border-red-500/30">⚠️</div>
+               <div className="space-y-3">
+                  <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white leading-none">Confirm System Wipe?</h2>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[4px] leading-relaxed">
+                    This will permanently delete all missions, settings, and partner records from your local neural link.
+                  </p>
+               </div>
+               <div className="space-y-4">
+                  <button 
+                    onClick={() => { onResetSystem?.(); setShowResetConfirm(false); }} 
+                    className="w-full bg-red-500 text-white py-5 rounded-3xl font-black uppercase tracking-[5px] text-[10px] shadow-xl active:translate-y-1 transition-all"
+                  >
+                    PURGE NEURAL GRID
+                  </button>
+                  <button 
+                    onClick={() => setShowResetConfirm(false)} 
+                    className="w-full bg-white/5 border border-white/10 text-white py-5 rounded-3xl font-black uppercase tracking-[5px] text-[10px]"
+                  >
+                    ABORT WIPE
+                  </button>
+               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
 
       {/* Driver Edit Modal */}
       <AnimatePresence>
