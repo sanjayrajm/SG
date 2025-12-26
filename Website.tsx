@@ -1,26 +1,26 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useMotionValue } from 'framer-motion';
-import { BookingPage } from './components/BookingPage.tsx';
-import { TempleBookingPage } from './components/TempleBookingPage.tsx';
-import { TempleTourPage } from './components/TempleTourPage.tsx';
-import { IdentityPage } from './components/IdentityPage.tsx';
-import { AdminPanel } from './components/AdminPanel.tsx';
-import { DriverApp } from './components/DriverApp.tsx';
-import { AuthPortal } from './components/AuthPortal.tsx';
-import { BackgroundVideo } from './components/BackgroundVideo.tsx';
-import { FleetPage } from './components/FleetPage.tsx';
-import { LocationPage } from './components/LocationPage.tsx';
-import { SmartAssistant } from './components/SmartAssistant.tsx';
-import { FloatingSocials } from './components/FloatingSocials.tsx';
-import { CustomerDashboard } from './components/CustomerDashboard.tsx';
-import { ContactPage } from './components/ContactPage.tsx';
-import { AboutPage } from './components/AboutPage.tsx';
-import { VehicleTariffPage } from './components/VehicleTariffPage.tsx';
-import { LanguageSwitcher } from './components/LanguageSwitcher.tsx';
-import { VEHICLES } from './constants.tsx';
-import { TRANSLATIONS } from './translations.ts';
-import { Vehicle, DriverProfile, Booking, DriverAuth, UserRole, AppSettings, CustomerProfile, Language, BookingStatus } from './types.ts';
+import { BookingPage } from './components/BookingPage';
+import { TempleBookingPage } from './components/TempleBookingPage';
+import { TempleTourPage } from './components/TempleTourPage';
+import { IdentityPage } from './components/IdentityPage';
+import { AdminPanel } from './components/AdminPanel';
+import { DriverApp } from './components/DriverApp';
+import { AuthPortal } from './components/AuthPortal';
+import { BackgroundVideo } from './components/BackgroundVideo';
+import { FleetPage } from './components/FleetPage';
+import { LocationPage } from './components/LocationPage';
+import { SmartAssistant } from './components/SmartAssistant';
+import { FloatingSocials } from './components/FloatingSocials';
+import { CustomerDashboard } from './components/CustomerDashboard';
+import { ContactPage } from './components/ContactPage';
+import { AboutPage } from './components/AboutPage';
+import { VehicleTariffPage } from './components/VehicleTariffPage';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { VEHICLES } from './constants';
+import { TRANSLATIONS } from './translations';
+import { Vehicle, DriverProfile, Booking, DriverAuth, UserRole, AppSettings, CustomerProfile, Language, BookingStatus } from './types';
 
 type View = 'home' | 'about' | 'fleet' | 'locations' | 'contact' | 'booking' | 'temple-booking' | 'temple-tour' | 'identity' | 'admin' | 'driver' | 'ride-history' | 'customer-login' | 'vehicle-tariff';
 
@@ -421,7 +421,6 @@ export const Website: React.FC = () => {
 
               <section className="bg-white/90 backdrop-blur-sm"><AboutPage t={t.about} common={t.common} asSection /></section>
               
-              {/* SACRED HERITAGE SECTION (KANCHI TOURS ON HOME PAGE) */}
               <section className="bg-slate-950/60 backdrop-blur-md py-32 px-6 relative overflow-hidden">
                 <div className="absolute inset-0 tactical-grid opacity-10" />
                 <div className="max-w-7xl mx-auto space-y-20 relative z-10">

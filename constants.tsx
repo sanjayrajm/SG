@@ -1,5 +1,5 @@
 
-import { generateVehicleImage } from './services/aiImageService.ts';
+import { generateVehicleImage } from './services/aiImageService';
 
 export const VEHICLES: Record<string, any> = {
   HATCHBACK: {
