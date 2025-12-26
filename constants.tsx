@@ -1,3 +1,4 @@
+
 import { generateVehicleImage } from './services/aiImageService';
 
 export const VEHICLES: Record<string, any> = {
@@ -114,25 +115,6 @@ export const TAMIL_NADU_DISTRICTS = [
   "Nagapattinam", "Namakkal", "Nilgiris", "Perambalur", "Pudukkottai", "Ramanathapuram", "Ranipet",
   "Salem", "Sivaganga", "Tenkasi", "Thanjavur", "Theni", "Thoothukudi", "Tiruchirappalli", "Tirunelveli",
   "Tirupathur", "Tiruppur", "Tiruvallur", "Tiruvannamalai", "Tiruvarur", "Vellore", "Viluppuram", "Virudhunagar"
-];
-
-export const TAMIL_NADU_TOURISM = [
-  {
-    category: "Heritage & Temples",
-    locations: [
-      { name: "Kanchipuram", info: "The city of thousand temples and silk sarees." },
-      { name: "Madurai Meenakshi", info: "An architectural marvel and spiritual hub." },
-      { name: "Thanjavur Big Temple", info: "UNESCO World Heritage site with Chola grandeur." }
-    ]
-  },
-  {
-    category: "Nature & Hill Stations",
-    locations: [
-      { name: "Ooty", info: "Queen of hill stations in the Nilgiris." },
-      { name: "Kodaikanal", info: "Princess of hill stations with serene lakes." },
-      { name: "Yercaud", info: "The Jewel of the South in Shevaroy Hills." }
-    ]
-  }
 ];
 
 export const DISTANCE_SLOTS = [
