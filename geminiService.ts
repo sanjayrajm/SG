@@ -1,3 +1,4 @@
+
 /**
  * SG NEURAL CORE: AI Facade
  * Centralized export for all mission-critical AI intelligence.
