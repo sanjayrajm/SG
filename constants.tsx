@@ -1,4 +1,3 @@
-
 import { generateVehicleImage } from './services/aiImageService';
 
 export const VEHICLES: Record<string, any> = {

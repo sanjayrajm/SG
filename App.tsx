@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Website } from './components/Website';
+import { Website } from './Website';
 
 const App: React.FC = () => {
   return (
