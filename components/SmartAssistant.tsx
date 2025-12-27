@@ -45,9 +45,11 @@ export const SmartAssistant: React.FC = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const outputAudioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-  const sessionRef = useRef<any>(null);
+  const scriptProcessorRef = useRef<ScriptProcessorNode | null>(null);
+  const activeSessionRef = useRef<any>(null);
   const sourcesRef = useRef<Set<AudioBufferSourceNode>>(new Set());
   const nextStartTimeRef = useRef<number>(0);
+  const isComponentMounted = useRef(true);
 
   const toggleConnection = async () => {
     if (isActive) {
@@ -58,22 +60,35 @@ export const SmartAssistant: React.FC = () => {
   };
 
   const disconnect = () => {
-    if (sessionRef.current) {
-      sessionRef.current = null;
+    if (scriptProcessorRef.current) {
+      scriptProcessorRef.current.disconnect();
+      scriptProcessorRef.current.onaudioprocess = null;
+      scriptProcessorRef.current = null;
     }
+    
+    if (activeSessionRef.current) {
+      activeSessionRef.current = null;
+    }
+
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(track => track.stop());
       streamRef.current = null;
     }
+
     for (const source of sourcesRef.current.values()) {
-      source.stop();
+      try { source.stop(); } catch(e) {}
     }
     sourcesRef.current.clear();
-    setIsActive(false);
-    setTranscription('');
+    
+    if (isComponentMounted.current) {
+      setIsActive(false);
+      setTranscription('');
+      setIsConnecting(false);
+    }
   };
 
   const connect = async () => {
+    if (isConnecting) return;
     setIsConnecting(true);
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -88,24 +103,46 @@ export const SmartAssistant: React.FC = () => {
         model: 'gemini-2.5-flash-native-audio-preview-09-2025',
         callbacks: {
           onopen: () => {
+            if (!isComponentMounted.current) return;
             setIsActive(true);
             setIsConnecting(false);
+            
             if (!audioContextRef.current) return;
             const source = audioContextRef.current.createMediaStreamSource(stream);
             const scriptProcessor = audioContextRef.current.createScriptProcessor(4096, 1, 1);
+            scriptProcessorRef.current = scriptProcessor;
+
             scriptProcessor.onaudioprocess = (e) => {
+              // CRITICAL: Only send if this session is still the active one
+              if (!activeSessionRef.current) return;
+
               const inputData = e.inputBuffer.getChannelData(0);
               const l = inputData.length;
               const int16 = new Int16Array(l);
               for (let i = 0; i < l; i++) int16[i] = inputData[i] * 32768;
-              const pcmBlob = { data: encode(new Uint8Array(int16.buffer)), mimeType: 'audio/pcm;rate=16000' };
-              sessionPromise.then(session => session.sendRealtimeInput({ media: pcmBlob }));
+              
+              const pcmBlob = { 
+                data: encode(new Uint8Array(int16.buffer)), 
+                mimeType: 'audio/pcm;rate=16000' 
+              };
+
+              sessionPromise.then(session => {
+                if (activeSessionRef.current === session) {
+                  try {
+                    session.sendRealtimeInput({ media: pcmBlob });
+                  } catch (err) {
+                    console.debug("Neural Comms deferred: Socked closed.");
+                  }
+                }
+              });
             };
             source.connect(scriptProcessor);
             scriptProcessor.connect(audioContextRef.current.destination);
           },
           onmessage: async (message: LiveServerMessage) => {
+            if (!isComponentMounted.current) return;
             const content = message.serverContent;
+            
             if (content?.outputTranscription) {
               setTranscription(prev => prev + content.outputTranscription!.text);
             }
@@ -129,7 +166,9 @@ export const SmartAssistant: React.FC = () => {
               sourcesRef.current.add(source);
             }
             if (content?.interrupted) {
-              for (const s of sourcesRef.current) s.stop();
+              for (const s of sourcesRef.current) {
+                try { s.stop(); } catch(e) {}
+              }
               sourcesRef.current.clear();
               nextStartTimeRef.current = 0;
             }
@@ -143,15 +182,23 @@ export const SmartAssistant: React.FC = () => {
           systemInstruction: 'You are the SG Call Taxi Neural Voice Link. Help users with taxi bookings, Kanchipuram temple info, and travel logistics in a tactical, efficient, and professional manner. You represent the elite SG brand.'
         }
       });
-      sessionRef.current = sessionPromise;
+
+      sessionPromise.then(session => {
+        activeSessionRef.current = session;
+      });
+      
     } catch (e) {
       console.error("Neural Link Failed", e);
-      setIsConnecting(false);
+      if (isComponentMounted.current) setIsConnecting(false);
     }
   };
 
   useEffect(() => {
-    return () => disconnect();
+    isComponentMounted.current = true;
+    return () => {
+      isComponentMounted.current = false;
+      disconnect();
+    };
   }, []);
 
   return (
