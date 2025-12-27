@@ -305,7 +305,7 @@ export const BookingPage: React.FC<Props> = ({
               )}
            </div>
 
-           {/* Unit Class Selection - Refactored for better icons */}
+           {/* Unit Class Selection - Refactored for better visibility */}
            <div className="space-y-4">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest block ml-4 italic">Deployment Unit Class</label>
               <div className="grid grid-cols-3 gap-3 md:gap-4">
@@ -323,7 +323,7 @@ export const BookingPage: React.FC<Props> = ({
                       <img 
                         src={v.image} 
                         className={`max-w-full max-h-full object-contain transition-all duration-500 ${
-                          formData.vehicleId === v.id ? 'scale-110 drop-shadow-2xl' : 'opacity-20 group-hover:opacity-50 grayscale group-hover:grayscale-0'
+                          formData.vehicleId === v.id ? 'scale-110 drop-shadow-2xl opacity-100' : 'opacity-40 grayscale group-hover:grayscale-0 group-hover:opacity-70'
                         }`} 
                         alt={v.id} 
                       />
