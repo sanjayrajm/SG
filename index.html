@@ -26,32 +26,12 @@
     
     <!-- PWA & Mobile Optimization -->
     <meta name="theme-color" content="#FFC107">
-    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="./manifest.json">
     <link rel="apple-touch-icon" href="https://sanjayrajm.github.io/SGCALLTAXI-LOGO/logo.png">
 
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Poppins:wght@300;400;600;700&family=Latha&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              taxi: {
-                yellow: '#FFC107',
-                black: '#020617',
-              }
-            },
-            fontFamily: {
-              sans: ['Poppins', 'sans-serif'],
-              heading: ['Space Grotesk', 'sans-serif'],
-            },
-          }
-        }
-      }
-    </script>
 
 <script type="importmap">
 {
@@ -68,11 +48,9 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
 </head>
 <body class="bg-black text-white m-0 p-0 overflow-x-hidden w-full min-h-screen">
     <div id="root" class="w-full min-h-screen"></div>
     <script type="module" src="./index.tsx"></script>
-<script type="module" src="/index.tsx"></script>
 </body>
 </html>
