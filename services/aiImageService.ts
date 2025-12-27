@@ -25,10 +25,10 @@ export const generateVehicleImage = async (vehicleType: string, models: string[]
       },
     });
 
-    if (response?.generatedImages?.length > 0) {
-      const imageData = response.generatedImages[0].image;
-      if (imageData && imageData.imageBytes) {
-        return `data:image/png;base64,${imageData.imageBytes}`;
+    if (response && response.generatedImages && response.generatedImages.length > 0) {
+      const firstImage = response.generatedImages[0];
+      if (firstImage && firstImage.image && firstImage.image.imageBytes) {
+        return `data:image/png;base64,${firstImage.image.imageBytes}`;
       }
     }
     throw new Error("No image data returned from Imagen");
