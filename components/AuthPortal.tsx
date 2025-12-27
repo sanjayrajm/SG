@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AuthCredentials, DriverAuth, UserRole } from '../types';
@@ -165,23 +166,6 @@ export const AuthPortal: React.FC<Props> = ({ role, onBack, onSuccess, adminCred
              >
                 {isAuthenticating ? 'AUTHENTICATING...' : 'ESTABLISH CONNECTION'}
              </button>
-
-             {/* Tactical Hint for Demo Access */}
-             <div className="mt-8 pt-8 border-t border-white/5">
-                <p className="text-[7px] font-black text-slate-600 uppercase tracking-[4px] mb-4">Tactical Intelligence Hints</p>
-                <div className="grid grid-cols-2 gap-3">
-                   <div className="bg-white/5 p-3 rounded-xl border border-white/5 text-left">
-                      <p className="text-[7px] font-black text-yellow-400 uppercase mb-1">Command (Admin)</p>
-                      <p className="text-[9px] font-bold text-slate-400">ID: ADMIN</p>
-                      <p className="text-[9px] font-bold text-slate-400">KEY: 123</p>
-                   </div>
-                   <div className="bg-white/5 p-3 rounded-xl border border-white/5 text-left">
-                      <p className="text-[7px] font-black text-yellow-400 uppercase mb-1">Pilot (Driver)</p>
-                      <p className="text-[9px] font-bold text-slate-400">ID: SANJAY</p>
-                      <p className="text-[9px] font-bold text-slate-400">KEY: 123</p>
-                   </div>
-                </div>
-             </div>
           </form>
         )}
       </motion.div>

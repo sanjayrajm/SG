@@ -1,7 +1,7 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Vehicle } from '../types';
-import { BackgroundVideo } from './BackgroundVideo';
 
 interface Props {
   vehicles: Vehicle[];
@@ -13,76 +13,68 @@ interface Props {
   common: any;
 }
 
-const TACTICAL_VIDEO_SRC = "https://sanjayrajm.github.io/taxi-video-website/taxi-video.mp4";
-
 export const FleetPage: React.FC<Props> = ({ vehicles, onBack, onBook, onViewTariff, asSection = false, t, common }) => {
   return (
-    <div className={`w-full ${asSection ? 'py-24' : 'min-h-screen pt-32'} bg-slate-950/5 text-white font-sans relative overflow-x-hidden`}>
-      {!asSection && (
-        <BackgroundVideo src={TACTICAL_VIDEO_SRC} overlayOpacity="bg-slate-950/40" />
-      )}
-
-      {!asSection && (
-        <nav className="fixed top-0 left-0 right-0 z-[100] p-6 md:px-12 flex justify-between items-center bg-slate-950/80 backdrop-blur-3xl border-b border-white/5">
-          <motion.button 
-            whileHover={{ x: -5 }}
-            onClick={onBack} 
-            className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[4px] hover:text-yellow-400 transition-all group"
-          >
-            <span className="text-xl group-hover:-translate-x-1 transition-transform">←</span> {common.backHome}
-          </motion.button>
-        </nav>
-      )}
-
+    <div className={`w-full ${asSection ? 'py-32' : 'min-h-screen pt-12'} text-white font-sans relative overflow-x-hidden`}>
       <main className={`relative z-10 px-6 md:px-20 max-w-7xl mx-auto space-y-24`}>
         <motion.header 
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="space-y-6 text-center lg:text-left"
+          className="space-y-6 text-center"
         >
-           <h2 className="text-6xl md:text-[9rem] font-black italic uppercase tracking-tighter leading-[0.85] whitespace-pre-line">{t.heading}</h2>
-           <p className="text-slate-400 font-bold uppercase text-[10px] tracking-[8px]">{t.subheading}</p>
+           <h2 className="text-6xl md:text-[9rem] font-black italic uppercase tracking-tighter leading-[0.85] whitespace-pre-line text-glow-dark">
+             {t.heading}
+           </h2>
+           <p className="text-yellow-400 font-black uppercase text-[12px] tracking-[10px] text-glow-dark">
+             {t.subheading}
+           </p>
         </motion.header>
 
-        <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16"
-        >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
           {vehicles.map((v) => (
             <motion.div 
               key={v.id}
-              whileHover={{ y: -10 }}
-              className="bg-slate-900/60 backdrop-blur-3xl rounded-[60px] p-10 border border-white/10 flex flex-col shadow-2xl group relative overflow-hidden"
+              whileHover={{ y: -15, scale: 1.02 }}
+              className="glass-panel rounded-[60px] p-10 border border-white/20 flex flex-col group relative overflow-hidden transition-all duration-500"
             >
-              <div className="h-48 lg:h-64 bg-black/40 rounded-[40px] mb-8 flex items-center justify-center p-6 border border-white/5">
+              <div className="absolute inset-0 bg-yellow-400/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className="h-48 lg:h-64 bg-black/40 rounded-[40px] mb-8 flex items-center justify-center p-6 border border-white/10 shadow-inner group-hover:border-yellow-400/30 transition-all">
                 <img 
                   src={v.image} 
-                  className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-700" 
+                  className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700 drop-shadow-[0_20px_40px_rgba(0,0,0,0.5)]" 
                   alt={v.type} 
                 />
               </div>
               
-              <h3 className="text-3xl font-black mb-4 uppercase italic tracking-tighter">{v.type}</h3>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-8">{v.models.join(' • ')}</p>
+              <h3 className="text-4xl font-black mb-4 uppercase italic tracking-tighter text-white group-hover:text-yellow-400 transition-colors">
+                {v.type}
+              </h3>
+              <p className="text-[11px] font-black text-slate-400 uppercase tracking-[3px] mb-8 italic">
+                {v.models.join(' • ')}
+              </p>
               
-              <div className="mt-auto space-y-4">
+              <div className="mt-auto space-y-4 relative z-10">
                 <motion.button 
+                  whileTap={{ scale: 0.95 }}
                   onClick={onBook} 
-                  className="w-full py-6 rounded-3xl bg-yellow-400 text-black font-black uppercase tracking-[5px] shadow-lg border-b-4 border-yellow-600 active:translate-y-1 transition-all"
+                  className="w-full py-6 rounded-3xl bg-yellow-400 text-black font-black uppercase tracking-[5px] text-xs shadow-yellow-tactical border-b-8 border-yellow-600 active:translate-y-2 transition-all italic"
                 >
-                  {common.bookNow}
+                  {common.bookNow} ➔
                 </motion.button>
                 
                 <motion.button 
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => onViewTariff && onViewTariff(v)} 
-                  className="w-full py-5 rounded-3xl bg-white/5 border border-white/10 text-white font-black uppercase tracking-[3px] text-[10px]"
+                  className="w-full py-5 rounded-3xl bg-white/10 border border-white/20 text-white font-black uppercase tracking-[3px] text-[10px] hover:bg-white hover:text-black transition-all italic"
                 >
                   {common.viewFares}
                 </motion.button>
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
       </main>
     </div>
   );

@@ -1,8 +1,10 @@
+
 import React, { useRef, useEffect } from 'react';
 
 interface BackgroundVideoProps {
   src: string;
   poster?: string;
+  // Props kept for API compatibility but logic removed to satisfy "visible clear" request
   overlayOpacity?: string;
   blur?: string;
   gradientFrom?: string;
@@ -12,12 +14,7 @@ interface BackgroundVideoProps {
 
 export const BackgroundVideo: React.FC<BackgroundVideoProps> = ({ 
   src, 
-  poster = "",
-  overlayOpacity = "bg-slate-950/20",
-  blur = "backdrop-blur-[0px]",
-  gradientFrom = "from-slate-950/40",
-  gradientVia = "via-slate-950/20",
-  mobileOverlay = "bg-slate-950/40"
+  poster = ""
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -53,18 +50,11 @@ export const BackgroundVideo: React.FC<BackgroundVideoProps> = ({
         <source src={src} type="video/mp4" />
       </video>
       
-      {/* Tactical Overlays */}
-      <div className={`absolute inset-0 ${overlayOpacity} ${blur}`} />
-      <div className="absolute inset-0 neural-noise opacity-10" />
-      <div className="absolute inset-0 scanline opacity-5" />
-      
-      {/* Gradients */}
-      <div className={`absolute inset-0 bg-gradient-to-r ${gradientFrom} ${gradientVia} to-transparent lg:block hidden`} />
-      <div className={`absolute inset-0 ${mobileOverlay} lg:hidden block`} />
-      
-      {/* Final Visual Polish */}
-      <div className="absolute inset-0 tactical-grid opacity-20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-slate-950/30" />
+      {/* 
+          SCIENTIFIC REMOVAL: 
+          All tactical overlays, noise, scanlines, and gradients removed 
+          to ensure absolute clarity of the background asset.
+      */}
     </div>
   );
 };

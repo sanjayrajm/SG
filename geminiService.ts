@@ -5,3 +5,4 @@
  */
 export { getTacticalRouteIntel } from './services/aiRoutingService';
 export { generateVehicleImage } from './services/aiImageService';
+export { getTempleInsight } from './services/aiInsightService';

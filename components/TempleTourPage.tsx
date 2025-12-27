@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { GoogleGenAI } from '@google/genai';
+import { getTempleInsight } from '../geminiService';
 import { DIVYADESAM_TEMPLES, SHIVA_TEMPLES, FIXED_PACKAGES } from '../constants';
 import { Language, AppSettings } from '../types';
 
@@ -19,7 +19,6 @@ const FALLBACK_LOGO_URL = "https://raw.githubusercontent.com/sanjayrajm/taxi-vid
 
 export const TempleTourPage: React.FC<Props> = ({ lang, onBack, onSelectTemple, settings }) => {
   const [tourType, setTourType] = useState<TourType>('VISHNU');
-  const [logoFailed, setLogoFailed] = useState(false);
   const [templeIntel, setTempleIntel] = useState<Record<number, string>>({});
   const [isIntelLoading, setIsIntelLoading] = useState<Record<number, boolean>>({});
   
@@ -37,50 +36,17 @@ export const TempleTourPage: React.FC<Props> = ({ lang, onBack, onSelectTemple, 
   const fetchTempleInsight = async (templeId: number, templeName: string) => {
     if (templeIntel[templeId]) return;
     setIsIntelLoading(prev => ({ ...prev, [templeId]: true }));
-    
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `Provide 3 tactical travel tips for visiting ${templeName} in Kanchipuram. 
-      Focus on: Best time to visit to avoid crowds, dress code strictness, and nearby parking ease. 
-      Keep it brief and professional. Mention if it's a Paadal Petra Sivalayam or Divyadesam.`;
-      
-      const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
-        contents: prompt
-      });
-      
-      setTempleIntel(prev => ({ ...prev, [templeId]: response.text || 'No tactical intel found.' }));
-    } catch (e) {
-      setTempleIntel(prev => ({ ...prev, [templeId]: 'Neural link timeout. Try again.' }));
-    } finally {
-      setIsIntelLoading(prev => ({ ...prev, [templeId]: false }));
-    }
-  };
-
-  const handleLogoError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    const target = e.target as HTMLImageElement;
-    if (target.src === settings.logoUrl) target.src = OFFICIAL_LOGO_URL;
-    else if (target.src === OFFICIAL_LOGO_URL) target.src = FALLBACK_LOGO_URL;
-    else setLogoFailed(true);
+    const insight = await getTempleInsight(templeName);
+    setTempleIntel(prev => ({ ...prev, [templeId]: insight }));
+    setIsIntelLoading(prev => ({ ...prev, [templeId]: false }));
   };
 
   return (
-    <div className={`min-h-screen w-full ${themeBg} backdrop-blur-md text-white font-sans p-4 md:p-12 pt-24 relative overflow-x-hidden transition-colors duration-700`}>
+    <div className={`w-full ${themeBg} text-white font-sans p-4 md:p-12 relative overflow-x-hidden transition-colors duration-700`}>
       <div className="absolute inset-0 tactical-grid opacity-10 pointer-events-none" />
       
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-12 relative z-10">
-        <header className="space-y-6 text-center flex flex-col items-center">
-          <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[4px] text-slate-500 hover:text-white transition-all block mx-auto mb-2">
-            {isTamil ? '← முகப்பிற்கு' : '← BACK TO MISSION CONTROL'}
-          </button>
-          
-          <img 
-            src={settings.logoUrl || OFFICIAL_LOGO_URL} 
-            onError={handleLogoError}
-            className="h-20 md:h-28 w-auto mb-4 drop-shadow-2xl" 
-            alt="Logo" 
-          />
-          
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-7xl mx-auto space-y-12 relative z-10 pb-24">
+        <header className="space-y-8 text-center flex flex-col items-center">
           <div className="flex justify-center gap-3">
             {(['VISHNU', 'SHIVA'] as TourType[]).map(type => (
               <button 
@@ -108,7 +74,7 @@ export const TempleTourPage: React.FC<Props> = ({ lang, onBack, onSelectTemple, 
             initial={{ scale: 0.95, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             key={tourType}
-            className="bg-white/5 border-2 border-dashed border-white/20 rounded-[50px] p-8 md:p-12 relative overflow-hidden group hover:border-white/40 transition-all"
+            className="bg-white/5 border-2 border-dashed border-white/20 rounded-[50px] p-8 md:p-12 relative overflow-hidden group hover:border-white/40 transition-all shadow-2xl"
           >
             <div className="absolute top-0 right-0 p-12 text-9xl font-black italic opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity">
               {tourType === 'VISHNU' ? 'DIVYA' : 'SHIVA'}
@@ -138,7 +104,7 @@ export const TempleTourPage: React.FC<Props> = ({ lang, onBack, onSelectTemple, 
                     </div>
                     <div className="text-center">
                        <p className="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Yield</p>
-                       <p className="text-2xl font-black italic style={{ color: accentColor }} leading-none" style={{ color: accentColor }}>₹{fullTourData.fare}</p>
+                       <p className="text-2xl font-black italic leading-none" style={{ color: accentColor }}>₹{fullTourData.fare}</p>
                     </div>
                   </div>
                   <button 

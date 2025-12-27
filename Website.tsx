@@ -17,23 +17,26 @@ import { CustomerDashboard } from './components/CustomerDashboard';
 import { ContactPage } from './components/ContactPage';
 import { AboutPage } from './components/AboutPage';
 import { VehicleTariffPage } from './components/VehicleTariffPage';
+import { TariffPage } from './components/TariffPage';
 import { LanguageSwitcher } from './components/LanguageSwitcher';
 import { BookingConfirmationPage } from './components/BookingConfirmationPage';
 import { VEHICLES } from './constants';
 import { TRANSLATIONS } from './translations';
 import { Vehicle, DriverProfile, Booking, DriverAuth, UserRole, AppSettings, CustomerProfile, Language, BookingStatus } from './types';
 
-type View = 'home' | 'about' | 'fleet' | 'locations' | 'contact' | 'booking' | 'temple-booking' | 'temple-tour' | 'identity' | 'admin' | 'driver' | 'ride-history' | 'customer-login' | 'vehicle-tariff' | 'confirmation';
+type View = 'home' | 'about' | 'fleet' | 'locations' | 'contact' | 'booking' | 'temple-booking' | 'temple-tour' | 'identity' | 'admin' | 'driver' | 'ride-history' | 'customer-login' | 'vehicle-tariff' | 'confirmation' | 'tariffs';
+type Theme = 'dark' | 'light';
 
 const STORAGE_KEYS = {
-  SETTINGS: 'sg_settings_v1',
-  VEHICLES: 'sg_vehicles_v1',
-  DRIVERS: 'sg_drivers_v1',
-  DRIVER_AUTHS: 'sg_driver_auths_v1',
-  ADMIN_AUTH: 'sg_admin_auth_v1',
-  BOOKINGS: 'sg_bookings_v1',
-  CURRENT_CUSTOMER: 'sg_current_customer_v1',
-  LANG: 'sg_lang_v1'
+  SETTINGS: 'sg_settings_v2025',
+  VEHICLES: 'sg_vehicles_v2025',
+  DRIVERS: 'sg_drivers_v2025',
+  DRIVER_AUTHS: 'sg_driver_auths_v2025',
+  ADMIN_AUTH: 'sg_admin_auth_v2025',
+  BOOKINGS: 'sg_bookings_v2025',
+  CURRENT_CUSTOMER: 'sg_current_customer_v2025',
+  LANG: 'sg_lang_v2025',
+  THEME: 'sg_theme_v2025'
 };
 
 const MAIN_VIDEO_SRC = "https://sanjayrajm.github.io/taxi-video-website/taxi-video.mp4";
@@ -44,6 +47,11 @@ export const Website: React.FC = () => {
   const [lang, setLang] = useState<Language>(() => {
     const saved = localStorage.getItem(STORAGE_KEYS.LANG);
     return (saved as Language) || Language.ENGLISH;
+  });
+
+  const [theme, setTheme] = useState<Theme>(() => {
+    const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+    return (saved as Theme) || 'dark';
   });
 
   const [view, setView] = useState<View>('home');
@@ -82,8 +90,8 @@ export const Website: React.FC = () => {
   });
 
   const [drivers, setDrivers] = useState<DriverProfile[]>(() => load(STORAGE_KEYS.DRIVERS, [
-    { id: 'D1', name: 'Sanjay S.', phone: '8608000999', email: 'sanjay@sgtaxi.com', licenseNo: 'TN-21-2020', rating: 4.9, totalTrips: 1240, earnings: 45000, vehicleNo: 'TN 21 AX 1234', vehicleType: 'Sedan', status: 'active', isOnline: false },
-    { id: 'D2', name: 'Arjun P.', phone: '9860845452', email: 'arjun@sgtaxi.com', licenseNo: 'TN-21-2021', rating: 4.8, totalTrips: 850, earnings: 32000, vehicleNo: 'TN 21 BY 5678', vehicleType: 'SUV', status: 'active', isOnline: false }
+    { id: 'D1', name: 'Sanjay S.', phone: '8608000999', email: 'sanjay@sgtaxi.com', licenseNo: 'TN-21-2025', rating: 5.0, totalTrips: 0, earnings: 0, vehicleNo: 'TN 21 AX 1234', vehicleType: 'Sedan', status: 'active', isOnline: false },
+    { id: 'D2', name: 'Arjun P.', phone: '9860845452', email: 'arjun@sgtaxi.com', licenseNo: 'TN-21-2025', rating: 5.0, totalTrips: 0, earnings: 0, vehicleNo: 'TN 21 BY 5678', vehicleType: 'SUV', status: 'active', isOnline: false }
   ]));
 
   const [bookings, setBookings] = useState<Booking[]>(() => {
@@ -109,11 +117,16 @@ export const Website: React.FC = () => {
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.ADMIN_AUTH, JSON.stringify(adminAuth)); }, [adminAuth]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.DRIVER_AUTHS, JSON.stringify(driverAuths)); }, [driverAuths]);
   useEffect(() => { localStorage.setItem(STORAGE_KEYS.LANG, lang); }, [lang]);
+  useEffect(() => { localStorage.setItem(STORAGE_KEYS.THEME, theme); }, [theme]);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsInitializing(false), 2000);
     return () => clearTimeout(timer);
   }, []);
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+  };
 
   const navigateTo = (newView: View) => {
     setIsMobileMenuOpen(false);
@@ -133,6 +146,7 @@ export const Website: React.FC = () => {
     const previousView = newHistory[newHistory.length - 1];
     setHistory(newHistory);
     setView(previousView);
+    setIsMobileMenuOpen(false);
   };
 
   const resetSystem = () => {
@@ -156,10 +170,16 @@ export const Website: React.FC = () => {
     navigateTo('temple-booking');
   };
 
+  const handleViewVehicleTariff = (v: Vehicle) => {
+    setSelectedVehicle(v);
+    navigateTo('vehicle-tariff');
+  };
+
   const renderView = () => {
     switch(view) {
       case 'about': return <AboutPage t={t.about} common={t.common} onBack={goBack} />;
-      case 'fleet': return <FleetPage t={t.fleet} common={t.common} vehicles={vehicles} onBack={goBack} onBook={() => navigateTo('booking')} onViewTariff={(v: Vehicle) => { setSelectedVehicle(v); navigateTo('vehicle-tariff'); }} />;
+      case 'fleet': return <FleetPage t={t.fleet} common={t.common} vehicles={vehicles} onBack={goBack} onBook={() => navigateTo('booking')} onViewTariff={handleViewVehicleTariff} />;
+      case 'tariffs': return <TariffPage onBack={goBack} onBook={() => navigateTo('booking')} vehicles={vehicles} />;
       case 'locations': return <LocationPage t={t.locations} common={t.common} onBack={goBack} />;
       case 'contact': return <ContactPage t={t.contact} common={t.common} supportPhone={settings.supportPhone} onBack={goBack} />;
       case 'booking': return <BookingPage onBack={goBack} drivers={drivers} vehicles={vehicles} onNewBooking={(b: Booking) => setBookings([...bookings, b])} />;
@@ -219,7 +239,7 @@ export const Website: React.FC = () => {
     { id: 'about', label: t.common.about },
     { id: 'identity', label: isTamil ? 'அடையாளம்' : 'IDENTITY' },
     { id: 'temple-tour', label: isTamil ? 'ஆன்மீக உலா' : 'KANCHI TOURS' },
-    { id: 'fleet', label: t.common.services },
+    { id: 'tariffs', label: isTamil ? 'கட்டணங்கள்' : 'TARIFFS' },
     { id: 'locations', label: t.common.locations },
     { id: 'contact', label: t.common.contact },
   ];
@@ -242,9 +262,11 @@ export const Website: React.FC = () => {
     );
   };
 
+  const isAppView = view === 'admin' && isAdminAuthenticated || view === 'driver' && authenticatedDriverId;
+
   return (
-    <div className="w-full min-h-screen bg-[#020617] text-white font-sans flex flex-col relative overflow-hidden">
-      <div className="fixed inset-0 z-0 opacity-100">
+    <div className={`w-full min-h-screen ${theme === 'light' ? 'theme-light' : 'dark'} font-sans flex flex-col relative overflow-hidden transition-colors duration-500`}>
+      <div className={`fixed inset-0 z-0 opacity-100 transition-opacity duration-1000`}>
         <BackgroundVideo src={MAIN_VIDEO_SRC} />
       </div>
 
@@ -254,11 +276,11 @@ export const Website: React.FC = () => {
             key="splash"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[2000] bg-[#020617] flex flex-col items-center justify-center"
+            className={`fixed inset-0 z-[5000] ${theme === 'light' ? 'bg-white' : 'bg-[#020617]'} flex flex-col items-center justify-center`}
           >
              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center space-y-4 flex flex-col items-center">
                 {renderBrandLogo("h-20 md:h-28 mb-4")}
-                <h1 className="text-5xl font-black italic tracking-widest text-white uppercase">{settings.appName || t.nav.brand}</h1>
+                <h1 className={`text-5xl font-black italic tracking-widest uppercase ${theme === 'light' ? 'text-slate-900' : 'text-white'}`}>{settings.appName || t.nav.brand}</h1>
                 <div className="w-48 h-1 bg-yellow-400 mx-auto rounded-full overflow-hidden">
                   <motion.div 
                     initial={{ x: '-100%' }} 
@@ -273,73 +295,94 @@ export const Website: React.FC = () => {
       </AnimatePresence>
       
       <div className="flex-1 relative z-10 flex flex-col w-full h-full">
-        <header className="fixed top-0 left-0 right-0 z-[1000] bg-black/40 backdrop-blur-md border-b border-white/5 px-6 lg:px-12 py-4 flex items-center justify-between">
-          <div 
-            className="flex items-center gap-4 cursor-pointer group"
-            onClick={() => navigateTo('home')}
-          >
-            {renderBrandLogo("h-8 md:h-10")}
-            <div className="hidden sm:flex flex-col">
-              <span className="font-black text-xs tracking-tight text-white leading-none uppercase">{settings.appName || t.nav.brand}</span>
-              <span className="text-[7px] font-bold text-yellow-400 uppercase tracking-[2px] opacity-60">EST. 2025</span>
-            </div>
-          </div>
-
-          <nav className="hidden lg:flex items-center gap-10">
-            {navLinks.map((link) => (
-              <button
-                key={link.id}
-                onClick={() => navigateTo(link.id as View)}
-                className={`relative text-[9px] font-black uppercase tracking-[2px] transition-colors hover:text-yellow-400 ${
-                  view === link.id ? 'text-yellow-400' : 'text-white/60'
-                }`}
-              >
-                {link.label}
-              </button>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/5">
-              <button
-                onClick={() => navigateTo('driver')}
-                className={`px-5 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all ${view === 'driver' ? 'bg-white text-black' : 'text-white/60 hover:text-white'}`}
-              >
-                {isTamil ? 'டிரைவர் பக்கம்' : 'DRIVER LOGIN'}
-              </button>
-              <button
-                onClick={() => navigateTo('admin')}
-                className={`px-5 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all ${view === 'admin' ? 'bg-white text-black' : 'text-white/60 hover:text-white'}`}
-              >
-                {isTamil ? 'நிர்வாகம்' : 'ADMIN LOGIN'}
-              </button>
+        {!isAppView && (
+          <header className={`fixed top-0 left-0 right-0 z-[4000] px-6 lg:px-12 py-4 flex items-center justify-between transition-all glass-panel border-0 border-b`}>
+            <div className="flex items-center gap-4">
+              {view !== 'home' ? (
+                <motion.button 
+                  whileTap={{ scale: 0.9 }}
+                  onClick={goBack}
+                  className="w-11 h-11 bg-yellow-400 rounded-xl flex items-center justify-center text-black font-black text-xl border border-black/10 shadow-lg"
+                >
+                  ←
+                </motion.button>
+              ) : (
+                <div 
+                  className="flex items-center gap-4 cursor-pointer group"
+                  onClick={() => navigateTo('home')}
+                >
+                  {renderBrandLogo("h-9 md:h-11")}
+                  <div className="hidden sm:flex flex-col">
+                    <span className={`font-black text-xs tracking-tight leading-none uppercase ${theme === 'light' ? 'text-slate-950' : 'text-white'}`}>{settings.appName || t.nav.brand}</span>
+                    <span className="text-[7px] font-bold text-yellow-400 uppercase tracking-[2px] opacity-60">EST. 2025</span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="hidden md:block">
-              <LanguageSwitcher current={lang} onChange={setLang} />
+            <nav className="hidden lg:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <button
+                  key={link.id}
+                  onClick={() => navigateTo(link.id as View)}
+                  className={`relative text-[11px] font-black uppercase tracking-[2px] transition-colors hover:text-yellow-400 ${
+                    view === link.id ? 'text-yellow-400' : (theme === 'light' ? 'text-slate-900' : 'text-white/80 text-glow-dark')
+                  }`}
+                >
+                  {link.label}
+                </button>
+              ))}
+            </nav>
+
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={toggleTheme}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${theme === 'light' ? 'bg-slate-200 text-slate-900' : 'bg-white/10 text-white'}`}
+                title="Toggle Theme"
+              >
+                {theme === 'light' ? '🌙' : '☀️'}
+              </button>
+
+              <div className="hidden lg:flex items-center gap-1 bg-white/5 p-1 rounded-full border border-white/5">
+                <button
+                  onClick={() => navigateTo('driver')}
+                  className={`px-5 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all ${view === 'driver' ? 'bg-white text-black' : (theme === 'light' ? 'text-slate-600 hover:text-slate-900' : 'text-white/60 hover:text-white')}`}
+                >
+                  {isTamil ? 'டிரைவர் பக்கம்' : 'DRIVER'}
+                </button>
+                <button
+                  onClick={() => navigateTo('admin')}
+                  className={`px-5 py-2 text-[8px] font-black uppercase tracking-widest rounded-full transition-all ${view === 'admin' ? 'bg-white text-black' : (theme === 'light' ? 'text-slate-600 hover:text-slate-900' : 'text-white/60 hover:text-white')}`}
+                >
+                  {isTamil ? 'நிர்வாகம்' : 'ADMIN'}
+                </button>
+              </div>
+
+              <div className="hidden md:block">
+                <LanguageSwitcher current={lang} onChange={setLang} />
+              </div>
+              
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigateTo('booking')}
+                className="hidden sm:block bg-yellow-400 text-black px-6 py-2.5 rounded-full font-black text-[10px] uppercase tracking-widest shadow-lg transition-all"
+              >
+                {t.common.bookNow}
+              </motion.button>
+
+              <button 
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden w-11 h-11 flex flex-col items-center justify-center gap-1.5 z-[4500] relative group bg-yellow-400 rounded-xl border border-black/10 shadow-lg"
+              >
+                <motion.div animate={isMobileMenuOpen ? { rotate: 45, y: 7.5 } : { rotate: 0, y: 0 }} className="w-5 h-[3px] bg-black rounded-full" />
+                <motion.div animate={isMobileMenuOpen ? { opacity: 0, x: 10 } : { opacity: 1, x: 0 }} className="w-5 h-[3px] bg-black rounded-full" />
+                <motion.div animate={isMobileMenuOpen ? { rotate: -45, y: -7.5 } : { rotate: 0, y: 0 }} className="w-5 h-[3px] bg-black rounded-full" />
+              </button>
             </div>
-            
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigateTo('booking')}
-              className="hidden sm:block bg-yellow-400 text-black px-6 py-2.5 rounded-full font-black text-[9px] uppercase tracking-widest shadow-lg active:translate-y-0.5 transition-all"
-            >
-              {t.common.bookNow}
-            </motion.button>
+          </header>
+        )}
 
-            <button 
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden w-8 h-8 flex flex-col items-center justify-center gap-1.5 z-[1100]"
-            >
-              <motion.div animate={isMobileMenuOpen ? { rotate: 45, y: 6.5 } : { rotate: 0, y: 0 }} className="w-5 h-0.5 bg-white" />
-              <motion.div animate={isMobileMenuOpen ? { opacity: 0 } : { opacity: 1 }} className="w-5 h-0.5 bg-white" />
-              <motion.div animate={isMobileMenuOpen ? { rotate: -45, y: -6.5 } : { rotate: 0, y: 0 }} className="w-5 h-0.5 bg-white" />
-            </button>
-          </div>
-        </header>
-
-        {/* Mobile Menu Overlay */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
@@ -347,9 +390,10 @@ export const Website: React.FC = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-0 z-[1050] bg-slate-950/95 backdrop-blur-2xl lg:hidden flex flex-col p-12 pt-32"
+              className={`fixed inset-0 z-[3500] ${theme === 'light' ? 'bg-white/98' : 'bg-[#020617]/98'} backdrop-blur-3xl lg:hidden flex flex-col p-10 pt-32`}
             >
-              <div className="flex flex-col gap-8 flex-1">
+              <div className="absolute inset-0 tactical-grid opacity-10 pointer-events-none" />
+              <div className="flex flex-col gap-7 flex-1 relative z-10">
                 {navLinks.map((link) => (
                   <motion.button
                     key={link.id}
@@ -357,7 +401,7 @@ export const Website: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     onClick={() => navigateTo(link.id as View)}
                     className={`text-4xl font-black italic uppercase text-left tracking-tighter ${
-                      view === link.id ? 'text-yellow-400' : 'text-white/60'
+                      view === link.id ? 'text-yellow-400' : (theme === 'light' ? 'text-slate-900' : 'text-white/60')
                     }`}
                   >
                     {link.label}
@@ -367,27 +411,24 @@ export const Website: React.FC = () => {
                 <div className="h-px w-full bg-white/10 my-4" />
                 
                 <div className="flex flex-col gap-6">
-                   <button
-                    onClick={() => navigateTo('driver')}
-                    className="text-left font-black text-xs tracking-widest text-white/40 uppercase"
-                  >
-                    {isTamil ? 'டிரைவர் லாகின்' : 'DRIVER LOGIN'}
+                   <button onClick={() => navigateTo('driver')} className={`text-left font-black text-sm tracking-widest uppercase ${theme === 'light' ? 'text-slate-500' : 'text-white/40'}`}>
+                    {isTamil ? 'டிரைவர் பக்கம்' : 'DRIVER TERMINAL'}
                   </button>
-                  <button
-                    onClick={() => navigateTo('admin')}
-                    className="text-left font-black text-xs tracking-widest text-white/40 uppercase"
-                  >
-                    {isTamil ? 'நிர்வாக லாகின்' : 'ADMIN LOGIN'}
+                  <button onClick={() => navigateTo('admin')} className={`text-left font-black text-sm tracking-widest uppercase ${theme === 'light' ? 'text-slate-500' : 'text-white/40'}`}>
+                    {isTamil ? 'நிர்வாக மையம்' : 'ADMIN CONTROL'}
                   </button>
-                  <div className="pt-2">
+                  <div className="flex justify-between items-center pt-2">
                     <LanguageSwitcher current={lang} onChange={setLang} />
+                    <button onClick={toggleTheme} className="p-3 bg-yellow-400 rounded-xl text-black">
+                      {theme === 'light' ? '🌙 Night' : '☀️ Day'}
+                    </button>
                   </div>
                 </div>
               </div>
 
               <button
                 onClick={() => navigateTo('booking')}
-                className="w-full bg-yellow-400 text-black py-6 rounded-3xl font-black uppercase text-xl italic shadow-2xl mt-auto"
+                className="w-full bg-yellow-400 text-black py-6 rounded-[30px] font-black uppercase text-xl italic shadow-2xl mt-auto relative z-10 border-b-8 border-yellow-600 active:translate-y-1 transition-all"
               >
                 {t.common.bookNow}
               </button>
@@ -408,10 +449,10 @@ export const Website: React.FC = () => {
                   animate={{ y: 0, opacity: 1 }} 
                   className="space-y-8 max-w-5xl"
                 >
-                  <h2 className="text-7xl md:text-9xl lg:text-[10rem] font-black italic tracking-tighter leading-[0.85] uppercase text-white">
+                  <h2 className={`text-7xl md:text-9xl lg:text-[10rem] font-black italic tracking-tighter leading-[0.85] uppercase ${theme === 'light' ? 'text-slate-900' : 'text-white text-glow-dark'}`}>
                     {t.hero.title}
                   </h2>
-                  <p className="text-base md:text-lg text-slate-400 max-w-xl mx-auto font-medium uppercase tracking-tight italic">
+                  <p className={`text-base md:text-lg max-w-xl mx-auto font-black uppercase tracking-tight italic ${theme === 'light' ? 'text-slate-800' : 'text-white/90 text-glow-dark'}`}>
                     {t.hero.subtitle}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
@@ -419,80 +460,55 @@ export const Website: React.FC = () => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => navigateTo('booking')} 
-                      className="bg-yellow-400 text-black px-12 py-5 rounded-full font-black text-xl italic uppercase shadow-2xl transition-all"
+                      className="bg-yellow-400 text-black px-12 py-5 rounded-full font-black text-xl italic uppercase shadow-2xl transition-all border-b-4 border-yellow-600"
                     >
                       {t.hero.ctaBook}
                     </motion.button>
-                    {bookings.length > 0 && (
-                      <motion.button 
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          setSelectedBooking(bookings[bookings.length - 1]);
-                          navigateTo('confirmation');
-                        }}
-                        className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-12 py-5 rounded-full font-black text-xl italic uppercase transition-all"
-                      >
-                        {isTamil ? 'முன்பதிவு விவரம் ➔' : 'VIEW BOOKING ➔'}
-                      </motion.button>
-                    )}
                     <motion.button 
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
-                      onClick={() => navigateTo('temple-tour')} 
-                      className="bg-white/5 backdrop-blur-md border border-white/20 text-white px-12 py-5 rounded-full font-black text-xl italic uppercase transition-all"
+                      onClick={() => navigateTo('tariffs')} 
+                      className={`backdrop-blur-md border px-12 py-5 rounded-full font-black text-xl italic uppercase transition-all shadow-2xl ${theme === 'light' ? 'bg-white/60 text-slate-900 border-slate-300' : 'bg-white/10 text-white border-white/20'}`}
                     >
-                      {isTamil ? 'ஆன்மீக உலா ➔' : 'TEMPLE TOURS ➔'}
+                      {isTamil ? 'கட்டணங்கள்' : 'VIEW TARIFFS'}
                     </motion.button>
                   </div>
                 </motion.div>
               </section>
 
-              <section className="bg-white/90 backdrop-blur-sm"><AboutPage t={t.about} common={t.common} asSection /></section>
+              <section className="bg-white/95 backdrop-blur-sm shadow-inner"><AboutPage t={t.about} common={t.common} asSection /></section>
               
-              <section className="bg-slate-950/60 backdrop-blur-md py-32 px-6 relative overflow-hidden">
-                <div className="absolute inset-0 tactical-grid opacity-10" />
+              <section className={`py-32 px-6 relative overflow-hidden transition-colors duration-500 ${theme === 'light' ? 'bg-slate-100' : 'bg-slate-950/40 backdrop-blur-md'}`}>
+                <div className="absolute inset-0 tactical-grid opacity-20" />
                 <div className="max-w-7xl mx-auto space-y-20 relative z-10">
                    <div className="text-center space-y-6">
-                      <h2 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-none text-white">
+                      <h2 className={`text-5xl md:text-8xl font-black italic uppercase tracking-tighter leading-none ${theme === 'light' ? 'text-slate-950' : 'text-white text-glow-dark'}`}>
                         {isTamil ? 'ஆன்மீக\nபயணம்.' : 'SACRED\nHERITAGE.'}
                       </h2>
-                      <p className="text-yellow-400 font-bold uppercase text-[10px] tracking-[8px]">
+                      <p className="text-yellow-400 font-black uppercase text-[12px] tracking-[10px] text-glow-dark">
                         {isTamil ? 'காஞ்சிபுரத்தின் புனித ஆலயங்களை தரிசிக்க' : 'EXPERIENCE THE ETERNAL CITY OF KANCHIPURAM'}
                       </p>
                    </div>
 
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                      <motion.div 
-                        whileHover={{ y: -10 }}
-                        className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[60px] p-12 flex flex-col group overflow-hidden relative"
-                      >
+                      <motion.div whileHover={{ y: -10 }} className="glass-panel rounded-[60px] p-12 flex flex-col group overflow-hidden relative">
                          <div className="absolute top-0 right-0 p-8 text-4xl opacity-20">🪷</div>
-                         <h3 className="text-3xl font-black italic uppercase text-white mb-4">Divyadesam Tour</h3>
-                         <p className="text-slate-400 text-sm font-medium leading-relaxed mb-10 flex-1 uppercase">
+                         <h3 className={`text-3xl font-black italic uppercase mb-4 ${theme === 'light' ? 'text-slate-900' : 'text-white'}`}>Divyadesam Tour</h3>
+                         <p className={`text-sm font-bold leading-relaxed mb-10 flex-1 uppercase ${theme === 'light' ? 'text-slate-600' : 'text-slate-300'}`}>
                            {isTamil ? '15 புனித வைணவ திவ்ய தேசங்களை தரிசிக்க சிறப்பு ஆன்மீகப் பயணம்.' : 'A spiritual odyssey covering the 15 sacred Vaishnava Divyadesam temples of Kanchipuram.'}
                          </p>
-                         <button 
-                           onClick={() => navigateTo('temple-tour')}
-                           className="w-full bg-yellow-400 text-black py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-2xl hover:scale-105 transition-all"
-                         >
+                         <button onClick={() => navigateTo('temple-tour')} className="w-full bg-yellow-400 text-black py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-2xl hover:scale-105 transition-all">
                            {isTamil ? 'மேலும் அறிய ➔' : 'EXPLORE TOUR ➔'}
                          </button>
                       </motion.div>
 
-                      <motion.div 
-                        whileHover={{ y: -10 }}
-                        className="bg-slate-900/40 backdrop-blur-3xl border border-white/5 rounded-[60px] p-12 flex flex-col group overflow-hidden relative"
-                      >
+                      <motion.div whileHover={{ y: -10 }} className="glass-panel rounded-[60px] p-12 flex flex-col group overflow-hidden relative">
                          <div className="absolute top-0 right-0 p-8 text-4xl opacity-20">🔱</div>
-                         <h3 className="text-3xl font-black italic uppercase text-white mb-4">Sivalayangal Tour</h3>
-                         <p className="text-slate-400 text-sm font-medium leading-relaxed mb-10 flex-1 uppercase">
+                         <h3 className={`text-3xl font-black italic uppercase mb-4 ${theme === 'light' ? 'text-slate-900' : 'text-white'}`}>Sivalayangal Tour</h3>
+                         <p className={`text-sm font-bold leading-relaxed mb-10 flex-1 uppercase ${theme === 'light' ? 'text-slate-600' : 'text-slate-300'}`}>
                            {isTamil ? 'புனித 12 சிவாலயங்களின் அருளைப் பெற ஒரு மகத்தான பயணம்.' : 'A grand journey through the 12 significant Shiva temples across the heritage region.'}
                          </p>
-                         <button 
-                           onClick={() => navigateTo('temple-tour')}
-                           className="w-full bg-white text-black py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-2xl hover:scale-105 transition-all"
-                         >
+                         <button onClick={() => navigateTo('temple-tour')} className={`w-full py-5 rounded-3xl font-black uppercase text-xs tracking-widest shadow-2xl hover:scale-105 transition-all ${theme === 'light' ? 'bg-slate-900 text-white' : 'bg-white text-black'}`}>
                            {isTamil ? 'மேலும் அறிய ➔' : 'EXPLORE TOUR ➔'}
                          </button>
                       </motion.div>
@@ -500,30 +516,32 @@ export const Website: React.FC = () => {
                 </div>
               </section>
 
-              <section className="bg-slate-950/80 backdrop-blur-md"><FleetPage t={t.fleet} common={t.common} vehicles={vehicles} onBack={() => {}} onBook={() => navigateTo('booking')} asSection /></section>
+              <section className={`glass-panel border-0 border-y shadow-none transition-colors`}>
+                <FleetPage t={t.fleet} common={t.common} vehicles={vehicles} onBack={() => {}} onBook={() => navigateTo('booking')} onViewTariff={handleViewVehicleTariff} asSection />
+              </section>
               
-              <footer className="bg-[#0f1115]/90 backdrop-blur-lg pt-24 pb-12 px-6 border-t border-white/5">
+              <footer className={`pt-24 pb-12 px-6 border-t glass-panel border-0 border-t`}>
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
                   <div className="space-y-8">
-                    <h3 className="text-yellow-400 font-black text-xl uppercase tracking-widest leading-none">{isTamil ? 'எங்களைப் பற்றி' : 'ABOUT US'}</h3>
-                    <p className="text-gray-400 text-sm leading-relaxed font-medium">
+                    <h3 className="text-yellow-400 font-black text-xl uppercase tracking-widest leading-none text-glow-dark">ABOUT US</h3>
+                    <p className={`text-sm leading-relaxed font-bold ${theme === 'light' ? 'text-slate-700' : 'text-slate-200 text-glow-dark'}`}>
                       {t.about.description}
                     </p>
                   </div>
 
                   <div className="space-y-8">
-                    <h3 className="text-yellow-400 font-black text-xl uppercase tracking-widest leading-none">{isTamil ? 'இணைப்புகள்' : 'EXPLORE'}</h3>
+                    <h3 className="text-yellow-400 font-black text-xl uppercase tracking-widest leading-none text-glow-dark">EXPLORE</h3>
                     <div className="grid grid-cols-2 gap-x-12">
                       <div className="space-y-0">
                         {[
                           { label: t.common.home, id: 'home' },
                           { label: t.common.about, id: 'about' },
-                          { label: isTamil ? 'கட்டணங்கள்' : 'Tariffs', id: 'fleet' }
+                          { label: isTamil ? 'கட்டணங்கள்' : 'Tariffs', id: 'tariffs' }
                         ].map((link, idx) => (
-                          <div key={idx} className="border-b border-white/5 py-4 last:border-0">
-                            <button onClick={() => navigateTo(link.id as View)} className="flex items-center gap-3 text-gray-400 hover:text-yellow-400 transition-all group">
+                          <div key={idx} className={`py-4 border-b last:border-0 ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
+                            <button onClick={() => navigateTo(link.id as View)} className={`flex items-center gap-3 transition-all group ${theme === 'light' ? 'text-slate-600 hover:text-yellow-600' : 'text-slate-300 hover:text-yellow-400'}`}>
                               <span className="text-yellow-400 font-black text-xs transition-transform group-hover:translate-x-1">{'>'}</span>
-                              <span className="text-[13px] font-bold uppercase tracking-tight">{link.label}</span>
+                              <span className="text-[13px] font-black uppercase tracking-tight">{link.label}</span>
                             </button>
                           </div>
                         ))}
@@ -534,10 +552,10 @@ export const Website: React.FC = () => {
                           { label: t.common.services, id: 'fleet' },
                           { label: t.common.contact, id: 'contact' }
                         ].map((link, idx) => (
-                          <div key={idx} className="border-b border-white/5 py-4 last:border-0">
-                            <button onClick={() => navigateTo(link.id as View)} className="flex items-center gap-3 text-gray-400 hover:text-yellow-400 transition-all group">
+                          <div key={idx} className={`py-4 border-b last:border-0 ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
+                            <button onClick={() => navigateTo(link.id as View)} className={`flex items-center gap-3 transition-all group ${theme === 'light' ? 'text-slate-600 hover:text-yellow-600' : 'text-slate-300 hover:text-yellow-400'}`}>
                               <span className="text-yellow-400 font-black text-xs transition-transform group-hover:translate-x-1">{'>'}</span>
-                              <span className="text-[13px] font-bold uppercase tracking-tight">{link.label}</span>
+                              <span className="text-[13px] font-black uppercase tracking-tight">{link.label}</span>
                             </button>
                           </div>
                         ))}
@@ -546,31 +564,27 @@ export const Website: React.FC = () => {
                   </div>
 
                   <div className="space-y-8">
-                    <h3 className="text-yellow-400 font-black text-xl uppercase tracking-widest leading-none">{isTamil ? 'தொடர்புக்கு' : 'CONTACT US'}</h3>
+                    <h3 className="text-yellow-400 font-black text-xl uppercase tracking-widest leading-none text-glow-dark">CONTACT US</h3>
                     <div className="space-y-6">
                       <div className="space-y-3">
-                        <p className="text-yellow-400 font-black text-[11px] uppercase tracking-[3px]">{isTamil ? 'முகவரி:' : 'Address:'}</p>
-                        <p className="text-gray-400 text-sm leading-relaxed font-bold">
+                        <p className="text-yellow-400 font-black text-[11px] uppercase tracking-[3px]">Address:</p>
+                        <p className={`text-sm leading-relaxed font-black ${theme === 'light' ? 'text-slate-800' : 'text-white text-glow-dark'}`}>
                           SG Call Taxi Kanchipuram<br />
                           no18b-26b Ulagalanda mada st, near<br />
                           aruna mahal kanchipuram - 631502.
                         </p>
                       </div>
                       <div className="space-y-5 pt-4">
-                         <a href="tel:8608454545" className="flex items-center gap-4 text-gray-400 hover:text-yellow-400 transition-colors group">
+                         <a href="tel:8608454545" className={`flex items-center gap-4 transition-colors group ${theme === 'light' ? 'text-slate-900' : 'text-white hover:text-yellow-400'}`}>
                             <span className="text-yellow-400 text-xl transition-transform group-hover:scale-110">📞</span>
                             <span className="text-lg font-black italic tracking-tighter">86 08 454545</span>
-                         </a>
-                         <a href="mailto:sgcalltaxi@gmail.com" className="flex items-center gap-4 text-gray-400 hover:text-yellow-400 transition-colors group">
-                            <span className="text-yellow-400 text-xl transition-transform group-hover:scale-110">✉️</span>
-                            <span className="text-[13px] font-bold">sgcalltaxi@gmail.com</span>
                          </a>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="max-w-7xl mx-auto mt-24 pt-12 border-t border-white/5 text-center">
-                  <p className="text-[10px] font-black text-white/20 uppercase tracking-[6px]">
+                <div className={`max-w-7xl mx-auto mt-24 pt-12 border-t text-center ${theme === 'light' ? 'border-slate-200' : 'border-white/5'}`}>
+                  <p className={`text-[10px] font-black uppercase tracking-[6px] ${theme === 'light' ? 'text-slate-400' : 'text-white/40'}`}>
                     SG CALL TAXI 2025 © ALL RIGHTS RESERVED.
                   </p>
                 </div>
@@ -580,9 +594,11 @@ export const Website: React.FC = () => {
             <motion.div 
               key="sub-view"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[500] bg-[#020617]/40 backdrop-blur-sm w-full h-full overflow-y-auto pt-24"
+              className={`fixed inset-0 z-[500] backdrop-blur-xl w-full h-full overflow-y-auto pt-24 ${theme === 'light' ? 'bg-white/40' : 'bg-[#020617]/40'}`}
             >
-              {renderView()}
+              <div className={`w-full min-h-full ${theme === 'light' ? 'theme-light' : ''}`}>
+                {renderView()}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

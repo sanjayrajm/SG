@@ -1,3 +1,4 @@
+
 import { Language } from './types';
 
 export const TRANSLATIONS: Record<Language, any> = {
@@ -40,7 +41,7 @@ export const TRANSLATIONS: Record<Language, any> = {
       title: "ABOUT US",
       breadcrumb: "Home // About Us",
       heading: "FEW WORDS ABOUT US..",
-      description: "Kanchipuram SG Call Taxi is one among the most preferred & trusted taxi/cab services brand in Kanchipuram-Cheyyar-Walajabad and nearby. The journey started in the year 2010 and we are still travelling with satisfied customers on the roads of 2016.",
+      description: "Kanchipuram SG Call Taxi is among the most preferred & trusted taxi/cab services brand in Kanchipuram-Cheyyar-Walajabad and nearby. The journey started in 2025 with a vision to revolutionize tactical transit through AI-powered logistics.",
       missionTitle: "OUR MISSION",
       missionText: "Our Mission is to provide excellent transport service to customers and ensure Safe & Secure transportation of associates to help in your productivity level.",
       visionTitle: "OUR VISION",
@@ -128,11 +129,11 @@ export const TRANSLATIONS: Record<Language, any> = {
       title: "எங்களைப் பற்றி",
       breadcrumb: "முகப்பு // எங்களைப் பற்றி",
       heading: "எங்களைப் பற்றி சில வார்த்தைகள்..",
-      description: "காஞ்சிபுரம் எஸ்ஜி கால் டாக்ஸி காஞ்சிபுரம்-செய்யார்-வாலாஜாபாத் மற்றும் சுற்றுவட்டாரப் பகுதிகளில் மிகவும் விருப்பமான மற்றும் நம்பகமான டாக்ஸி/கேப் சேவை பிராண்டுகளில் ஒன்றாகும். இந்த பயணம் 2010 ஆம் ஆண்டு தொடங்கப்பட்டது மற்றும் நாங்கள் இன்னும் 2016 ஆம் ஆண்டின் சாலைகளில் திருப்திகரமான வாடிக்கையாளர்களுடன் பயணிக்கிறோம்.",
+      description: "காஞ்சிபுரம் எஸ்ஜி கால் டாக்ஸி காஞ்சிபுரம்-செய்யார்-வாலாஜாபாத் மற்றும் சுற்றுவட்டாரப் பகுதிகளில் மிகவும் விருப்பமான மற்றும் நம்பகமான டாக்ஸி/கேப் சேவை பிராண்டுகளில் ஒன்றாகும். இந்த பயணம் 2025 ஆம் ஆண்டு தொடங்கப்பட்டது.",
       missionTitle: "எங்கள் நோக்கம்",
       missionText: "வாடிக்கையாளர்களுக்கு சிறந்த போக்குவரத்து சேவையை வழங்குவதும், உங்கள் உற்பத்தித்திறன் நிலைக்கு உதவ சகாக்களின் பாதுகாப்பான மற்றும் உறுதியான போக்குவரத்தை உறுதி செய்வதும் எங்கள் நோக்கமாகும்.",
       visionTitle: "எங்கள் பார்வை",
-      visionText: "சிறந்த நடைமுறைகளை அறிமுகப்படுத்துவதும், மக்கள் தளவாடங்களில் சிறந்த சேவையை வழங்குவதும் மற்றும் தொழில்துறை தர குறியீடாக மாறுவதும் எங்கள் பார்வையாகும். வாடிக்கையாளர்களின் மாறிவரும் தேவையைப் புரிந்துகொள்வதற்கும், சேவை மட்டத்தில் வாடிக்கையாளர்களைத் திருப்திப்படுத்துவதற்கும் ஏற்ப நம்மைப் புதுப்பித்துக் கொள்ள வாடிக்கையாளர்களுடன் தொடர்பில் இருங்கள்.",
+      visionText: "சிறந்த நடைமுறைகளை அறிமுகப்படுத்துவதும், மக்கள் தளவாடங்களில் சிறந்த சேவையை வழங்குவதும் மற்றும் தொழில்துறை தர குறியீடாக மாறுவதும் எங்கள் பார்வையாகும்.",
       features: [
         "24x7 சேவை",
         "டிக்கெட் முன்பதிவு",

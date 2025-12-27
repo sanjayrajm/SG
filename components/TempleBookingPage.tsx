@@ -37,38 +37,21 @@ export const TempleBookingPage: React.FC<Props> = ({ onBack, drivers, vehicles, 
 
   const selectedVehicle = useMemo(() => vehicles.find(v => v.id === formData.vehicleId) || vehicles[0], [formData.vehicleId, vehicles]);
 
-  /**
-   * MISSION CORE: Dynamic Package Pricing Engine
-   * Resolves the "Rate Mismatch" by calculating the "Tour Premium" (overhead for stops/waiting)
-   * and applying it to the current vehicle's distance-based tariff.
-   */
   const currentFare = useMemo(() => {
-    // 1. Calculate the standard point-to-point fare for this distance and vehicle
     const standardCalculation = calculateMissionFare(packageInfo.distance, selectedVehicle, formData.isAc).totalFare;
-    
-    // 2. If this is a defined FIXED PACKAGE, we must preserve the multi-stop premium
     if (FIXED_PACKAGES[selectedTemple]) {
       const sedan = vehicles.find(v => v.id === 'SEDAN') || vehicles[0];
-      
-      // Calculate what a standard SEDAN AC trip would cost for this distance
       const standardSedanFare = calculateMissionFare(packageInfo.distance, sedan, true).totalFare;
-      
-      // The premium is the difference between the Package Fixed Price and a standard Sedan trip
       const tourPremium = packageInfo.fare - standardSedanFare;
-      
-      // Final yield is the current vehicle's standard fare + the preserved tour premium
       return standardCalculation + tourPremium;
     }
-    
     return standardCalculation;
   }, [packageInfo, selectedVehicle, formData.isAc, selectedTemple, vehicles]);
 
   const handleConfirm = () => {
     if (!formData.name || !formData.phone) return;
-
     setPhase('REDIRECTING');
     
-    // Construct Elite Requisition Message
     const message = `🚨 *SG CALL TAXI MISSION REQUISITION* 🚨\n\n` +
       `*Mission Type:* SACRED TEMPLE TOUR\n` +
       `*Tour Identity:* ${selectedTemple.toUpperCase()}\n` +
@@ -92,13 +75,12 @@ export const TempleBookingPage: React.FC<Props> = ({ onBack, drivers, vehicles, 
       vehicleType: formData.vehicleId,
       status: BookingStatus.PENDING,
       fare: currentFare,
-      otp: "TOUR", // Special OTP for WhatsApp bookings
+      otp: "TOUR",
       timestamp: new Date(),
       isAc: formData.isAc,
       passengerCount: 1
     };
 
-    // Small delay to maintain tactical feel
     setTimeout(() => {
       window.open(whatsappUrl, '_blank');
       onNewBooking(newBooking);
@@ -112,16 +94,15 @@ export const TempleBookingPage: React.FC<Props> = ({ onBack, drivers, vehicles, 
   }
 
   return (
-    <div className={`min-h-screen w-full ${themeBg} text-white font-sans p-6 md:p-12 pt-24 relative overflow-hidden transition-colors duration-1000`}>
+    <div className={`w-full ${themeBg} text-white font-sans p-6 md:p-12 relative overflow-hidden transition-colors duration-1000`}>
       <div className="absolute inset-0 tactical-grid opacity-10 pointer-events-none" />
       
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto space-y-12 relative z-10"
+        className="max-w-4xl mx-auto space-y-12 relative z-10 pb-24"
       >
         <header className="space-y-4 text-center">
-          <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[4px] text-slate-500 hover:text-white transition-colors">← Cancel Pilgrimage</button>
           <div className="flex flex-col items-center">
             <span className="text-[40px] mb-2">{isShivaTour ? '🔱' : '🪷'}</span>
             <h1 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter leading-none">
@@ -131,7 +112,6 @@ export const TempleBookingPage: React.FC<Props> = ({ onBack, drivers, vehicles, 
         </header>
 
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          {/* Package Intel */}
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-white/5 border border-white/10 p-10 rounded-[50px] space-y-8 h-full flex flex-col">
               <div className="flex-1">
@@ -162,7 +142,6 @@ export const TempleBookingPage: React.FC<Props> = ({ onBack, drivers, vehicles, 
             </div>
           </div>
 
-          {/* Form */}
           <div className="lg:col-span-3 space-y-8">
             <div className="bg-white/5 border border-white/10 p-10 rounded-[50px] space-y-6">
               <div className="space-y-6">

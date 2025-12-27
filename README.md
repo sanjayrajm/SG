@@ -1,5 +1,5 @@
 
-# SG CALL TAXI - NEURAL NETWORK V5.4
+# SG CALL TAXI - NEURAL NETWORK V1.0.0
 
 The premier AI-powered taxi ecosystem for Kanchipuram and Tamil Nadu.
 
@@ -17,7 +17,7 @@ In your local project folder, run these commands:
 ```bash
 git init
 git add .
-git commit -m "Initial mission deployment: SG Neural Core v5.4"
+git commit -m "Initial mission deployment: SG Neural Core v1.0.0"
 git branch -M main
 git remote add origin https://github.com/YOUR_USERNAME/sg-taxi.git
 git push -u origin main

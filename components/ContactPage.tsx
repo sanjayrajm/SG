@@ -30,19 +30,7 @@ export const ContactPage: React.FC<Props> = ({ onBack, supportPhone, asSection =
   const mapEmbedUrl = `https://maps.google.com/maps?q=${encodeURIComponent(mapAddress)}&t=&z=16&ie=UTF8&iwloc=&output=embed`;
 
   return (
-    <div className={`w-full ${asSection ? 'py-24' : 'min-h-screen pt-32'} bg-slate-950/20 text-white font-sans flex flex-col space-y-12 backdrop-blur-3xl relative`}>
-      {!asSection && (
-        <header className="flex justify-between items-center p-6 md:px-12 relative z-10">
-          <motion.button 
-            whileHover={{ x: -5 }}
-            onClick={onBack} 
-            className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[4px] hover:text-yellow-400 transition-all group"
-          >
-            <span className="text-xl group-hover:-translate-x-1 transition-transform">←</span> {common.backHome}
-          </motion.button>
-        </header>
-      )}
-
+    <div className={`w-full ${asSection ? 'py-24' : 'min-h-screen pt-12'} bg-slate-950/20 text-white font-sans flex flex-col space-y-12 backdrop-blur-3xl relative`}>
       <main className="max-w-7xl mx-auto w-full flex-1 flex flex-col items-center justify-center text-center space-y-16 relative z-10 px-6">
          <motion.div 
            initial={{ opacity: 0, scale: 0.9 }} 

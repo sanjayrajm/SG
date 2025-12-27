@@ -6,8 +6,22 @@
 @layer base {
   :root {
     --taxi-yellow: #FFC107;
-    --taxi-yellow-glow: rgba(255, 193, 7, 0.5);
+    --taxi-yellow-glow: rgba(255, 193, 7, 0.6);
     --neural-bg: #020617;
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+    --glass-bg: rgba(2, 6, 23, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --card-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .theme-light {
+    --neural-bg: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --glass-bg: rgba(255, 255, 255, 0.85);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --card-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.1);
   }
 
   html, body, #root {
@@ -17,42 +31,66 @@
     margin: 0;
     padding: 0;
     overflow-x: hidden;
-    background: transparent;
-  }
-
-  #root {
-    display: flex;
-    flex-direction: column;
-    background: transparent;
+    background-color: var(--neural-bg);
   }
 
   body {
-    @apply text-white antialiased;
+    @apply antialiased;
     font-family: 'Poppins', sans-serif;
-    -webkit-tap-highlight-color: transparent;
-    scroll-behavior: smooth;
-    background-color: #020617; /* Fallback only */
+    color: var(--text-primary);
+    transition: background-color 0.5s ease, color 0.5s ease;
   }
 
   h1, h2, h3, h4, .font-heading {
     font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.05em;
   }
+
+  /* HYPERREAL UTILITIES */
+  .text-glow-dark {
+    text-shadow: 0 2px 10px rgba(0,0,0,0.8), 0 0 20px rgba(0,0,0,0.4);
+  }
+  
+  .text-glow-yellow {
+    text-shadow: 0 0 15px rgba(255, 193, 7, 0.4);
+  }
+
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--card-shadow);
+  }
+
+  /* Global Theme Overrides */
+  .theme-light .bg-slate-950,
+  .theme-light .bg-slate-900,
+  .theme-light .bg-[#020617] { background-color: rgba(241, 245, 249, 0.9) !important; }
+  
+  .theme-light .text-white { color: #0f172a !important; }
+  .theme-light .text-slate-400 { color: #475569 !important; }
+  .theme-light .text-slate-500 { color: #64748b !important; }
+  
+  .theme-light .border-white\/5, 
+  .theme-light .border-white\/10 { border-color: rgba(0,0,0,0.1) !important; }
+  
+  .theme-light .bg-white\/5 { background-color: rgba(0,0,0,0.05) !important; }
+  .theme-light .bg-black\/40 { background-color: rgba(255,255,255,0.7) !important; }
 }
 
 @layer components {
   .tactical-grid {
     background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
-    mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
-    -webkit-mask-image: radial-gradient(circle at center, black 30%, transparent 100%);
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 50px 50px;
+    mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
   }
-}
-
-@layer utilities {
-  .no-scrollbar::-webkit-scrollbar {
-    width: 0;
-    height: 0;
+  
+  .theme-light .tactical-grid {
+    background-image: 
+      linear-gradient(to right, rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
   }
 }

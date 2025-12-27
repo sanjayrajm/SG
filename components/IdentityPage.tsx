@@ -37,18 +37,15 @@ export const IdentityPage: React.FC<Props> = ({ onBack, isTamil }) => {
   const [loadedAssets, setLoadedAssets] = useState<Record<string, boolean>>({});
 
   return (
-    <div className="min-h-screen w-full bg-[#020617] text-white font-sans p-6 md:p-12 pt-32 relative overflow-x-hidden">
+    <div className="w-full text-white font-sans p-6 md:p-12 relative overflow-x-hidden">
       <div className="absolute inset-0 tactical-grid opacity-10 pointer-events-none" />
       
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-7xl mx-auto space-y-20 relative z-10"
+        className="max-w-7xl mx-auto space-y-20 relative z-10 pb-24"
       >
         <header className="space-y-6 text-center">
-          <button onClick={onBack} className="text-[10px] font-black uppercase tracking-[4px] text-slate-500 hover:text-white transition-all mb-4">
-            {isTamil ? '← முகப்பிற்கு' : '← BACK TO MISSION CONTROL'}
-          </button>
           <h1 className="text-6xl md:text-9xl font-black italic uppercase tracking-tighter leading-none">
             IDENTITY<br/><span className="text-yellow-400">BLUEPRINTS.</span>
           </h1>
@@ -102,13 +99,6 @@ export const IdentityPage: React.FC<Props> = ({ onBack, isTamil }) => {
                     className={`max-w-full max-h-full object-contain group-hover:scale-105 transition-all duration-1000 block ${loadedAssets[asset.id] ? 'opacity-100' : 'opacity-0'}`}
                     alt={asset.title}
                     onLoad={() => setLoadedAssets(prev => ({ ...prev, [asset.id]: true }))}
-                  />
-                  
-                  {/* Decorative Scan Line */}
-                  <motion.div 
-                    animate={{ y: ['0%', '100%'], opacity: [0, 0.5, 0] }}
-                    transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
-                    className="absolute top-0 left-0 w-full h-0.5 bg-yellow-400/30 pointer-events-none"
                   />
                 </div>
               </div>
